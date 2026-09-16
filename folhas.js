@@ -1,27 +1,51 @@
 /* ============================================================
-   A FÁBRICA DE PALAVRAS — as dez folhas.
+   ESQUELETO DA FOLHA VIVA — as folhas.
 
-   Cada folha nasceu de um VERBO impresso numa folha real de alfabetização
-   (as 41 de `_pesquisa/fotos/ddg-alfa-1ano/`). O catálogo desses verbos é o
-   `_padrao/INTERATIVIDADES-FOLHA.md`. Nenhuma mecânica foi escolhida do nosso
-   cardápio: a folha é que manda.
+   ⚠️ ESTE ARQUIVO É A CASCA. As folhas (`f01`, `f02`, …) se escrevem abaixo, e
+   cada uma nasce de um VERBO impresso numa folha de papel colhida. O crivo —
+   comando VERBATIM e veredito de cada uma das trinta — vai em
+   `_sequencias/POTE-<assunto>.md`, e é DELE que sai o roteiro.
+
+   ⚠️ A POSIÇÃO É A IDENTIDADE: a folha da posição 7 usa o pote `p7`, grava os
+      ids `n7_*` e fala `p7enun`. Não há segunda lista para desencontrar.
+
+   O QUE JÁ VEM PRONTO AQUI (clonar destas peças, não reescrever):
+     · `faixa` · `enunciado` · `item` · `fechaItem` · `nomeSecreto`
+     · `opcoes` (a fileira de escolhas, com arrastar de brinde)
+     · `puxavel` (arrastar com mouse, dedo e caneta — três lições pagas dentro)
+     · `gavetas` (classificar em colunas, nas duas portas)
+     · `montaLigar` (ligar com linha curva)
+     · o teclado (`abreCruz`/`digitaCruz`/`confereCruz`/`rolaParaCruz`)
+     · navegação, boletim, relatório do professor, dossiê, retomar 55 min
    ============================================================ */
 
-var livro = document.getElementById("livro"), PAGEL = [];
+var livro = document.getElementById("livro"), PAGEL = [], TIRAS = [];
+/* ⚠️⚠️ AS FOLHAS DE LIGAR SE DECLARAM AQUI, e o número errado quebra DUAS
+   folhas de uma vez — medido no `_rima1`, que estava no ar: a folha que liga
+   NUNCA fechava (a criança ligava tudo e continuava faltando) e a folha
+   apontada por engano FECHAVA SOZINHA, sem ninguém tocar nela. São as únicas
+   cujos ids não nascem de `n<pi>_`, e sim dentro do `montaLigar`
+   (`l<pi>g<i>_<chave>`). Conferir com `node _qa/conta_folha.js <pasta>`. */
+/* ⚠️ NENHUMA folha deste caderno é de LIGAR — e por isso a lista fica vazia.
+   Se um dia entrar uma, o número dela vem AQUI, senão os ids `l<pi>g<i>_` não
+   batem com o pote e a folha nunca fecha (já aconteceu no `_rima1`, no ar). */
+var LIGAR = [];
+/* a cor da faixa por BLOCO da escada, não por folha: a criança vê que o assunto
+   mudou. Uma entrada por folha, de c1 a c5. */
+/* a cor da faixa por BLOCO da escada, não por folha: a criança vê que o
+   assunto mudou de lugar.
+   A máquina MONTA (1-9) · ACHA (10-12) · TIRA (13-14) · TROCA (15-19) ·
+   INVERTE (20-22) · ACRESCENTA (23-24) · RECORTA (25-26) ·
+   o CÓDIGO (27-30) · a palavra no MUNDO (31-35). */
+var CORES = ["c1", "c1", "c1", "c1", "c1", "c2", "c2", "c2", "c2", "c3", "c3", "c3", "c4", "c4", "c5", "c5", "c5", "c5", "c5", "c1", "c1", "c1", "c2", "c2", "c3", "c3", "c4", "c4", "c4", "c4", "c5", "c5", "c5", "c5", "c5"];
+
 
 function faixa(d, i, titulo){ d.appendChild(el("div", "faixa", '<div class="num">' + i + '</div><h2>' + titulo + '</h2>')); }
 function aoAbrir(d, fn){ if(!d._aoAbrir) d._aoAbrir = []; d._aoAbrir.push(fn); }
-/* ---------- O ALTO-FALANTE (pedido do Marcos, set/2026) ----------
-   Palavras dele: *"os enunciados podem ter o botão de som para a criança clicar
-   e ouvir"* e *"assim como as palavras"*.
-
-   É regra da casa e tem motivo: no 1º ano metade da turma ainda soletra. Tudo o
-   que a criança PRECISA LER tem que poder ser OUVIDO, senão ela responde pelo
-   desenho e a folha vira loteria.
-
-   ⚠️ O desenho do alto-falante é CSS puro — caixinha + triângulo + duas ondas
-   feitas com borda arredondada. Nada de emoji (vira quadradinho nos PCs da
-   escola) e nada de SVG (ordem dele). */
+/* ---------- O ALTO-FALANTE ----------
+   Regra da casa: tudo o que a criança PRECISA LER tem que poder ser OUVIDO.
+   O desenho do botão é CSS puro: nada de emoji (vira quadradinho nos PCs da
+   escola). */
 function botaoSom(rot, aoTocar){
   var b = el("button", "som");
   b.innerHTML = '<i class="cone"></i><i class="onda o1"></i><i class="onda o2"></i>';
@@ -35,76 +59,27 @@ function enunciado(d, pi, texto, chave){
   cx.appendChild(botaoSom("Ouvir o que a folha pede", function(){ falar(chave); }));
   d.appendChild(cx);
 }
-function palavraComSom(w){
-  var cx = el("div", "palin");
-  cx.appendChild(el("span", "pal", esc(w)));
-  cx.appendChild(botaoSom("Ouvir a palavra " + esc(w), function(){ falar("pal_" + w); }));
-  return cx;
-}
 function item(n){ return el("div", "item", n ? '<span class="n">' + n + '.</span>' : ""); }
-/* fecha o item e o prega na folha — o padrão que o `_alfa1` repetia à mão em
-   cada uma das onze folhas (marca o `feito`, o `data-qa` do jogador e anexa) */
 function fechaItem(d, box, id){
   if(ST.resp[id]) box.className = "item feito";
   box.setAttribute("data-qa", "item-" + id);
   d.appendChild(box);
 }
-
-function monta(){
-  livro.innerHTML = ""; PAGEL = []; RESP = {};
-  var caps = [f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10], i;
-  for(i = 0; i < caps.length; i++){
-    var d = el("div", "pagina" + (i > 0 ? " " + CORES[i - 1] : "")); d.setAttribute("data-pag", i);
-    caps[i](d, i);
-    if(i > 0) d.appendChild(el("div", "carimbo", "FOLHA<br>PRONTA"));
-    livro.appendChild(d); PAGEL.push(d);
-  }
+/* ⚠️ A RESPOSTA NÃO PODE APARECER ANTES DE A CRIANÇA RESPONDER. A palavra não
+   some: fica INVISÍVEL (`visibility`, para o espaço ficar guardado e a folha não
+   pular) e aparece no instante do acerto. É o que o `_qa/resposta_impressa.py`
+   mede. */
+function nomeSecreto(txt, id){
+  var b = el("b", "segredo" + (ST.resp[id] ? " revelado" : ""), txt);
+  b.setAttribute("data-nome", id);
+  return b;
 }
+function chaveQuadro(w){ return String(w).toLowerCase().replace(/[^a-z]/g, ""); }
 
-/* ---------- capa ----------
-   Pedido do Marcos (set/2026): *"essas atividades deveriam ter uma capa bem
-   legal e bonita"*. A capa não é enfeite: é a primeira coisa que a criança de
-   seis anos vê, e é ela que diz "isto aqui é um lugar bom".
-
-   ⚠️ RESTO DE CLONE, E ELE QUASE PASSOU: a capa herdada da Fábrica de Palavras
-   trazia `img("sapo")` — uma figura que existe LÁ e não existe aqui. O app abria
-   com um quadradinho vazio e um 404 no console, e nenhum portão de texto via
-   isso. Foi o navegador que pegou. Regra: capa clonada = trocar a CENA, sempre.
-
-   A ideia agora vem do nome: um BANDO — as palavras andam em dupla, e é isso
-   que a criança vai aprender a ouvir. Então a cena da capa são PARES QUE RIMAM,
-   lado a lado, com o sinal de igual entre eles. O movimento conta a atividade:
-   cada par entra junto, porque rima é coisa de dois. */
-function f0(d){
-  var c = el("div", "capa"), nome = "O BANDO DAS RIMAS", k, letras = "";
-  for(k = 0; k < nome.length; k++){
-    var ch = nome.charAt(k);
-    letras += ch === " " ? '<span class="esp"></span>'
-      : '<span class="lt" style="animation-delay:' + (0.05 * k).toFixed(2) + 's">' + ch + '</span>';
-  }
-  var PARES = [["gato", "pato"], ["bola", "mola"], ["boca", "foca"]], cena = "";
-  PARES.forEach(function(P, i){
-    cena += '<span class="dupla" style="animation-delay:' + (0.5 + i * 0.3).toFixed(2) + 's">' +
-            img(P[0]) + '<i class="igual"></i>' + img(P[1]) + '</span>';
-  });
-  c.innerHTML =
-    '<div class="ceu"><i class="nv n1"></i><i class="nv n2"></i><i class="nv n3"></i></div>' +
-    '<h1 class="titu">' + letras + '</h1>' +
-    '<div class="sub">Alfabetização &middot; 1º ano &middot; dez folhas de rima</div>' +
-    '<div class="esteira">' +
-      '<div class="cena">' + cena + '</div>' +
-      '<div class="cinta"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>' +
-    '</div>' +
-    '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
-  d.appendChild(c);
-}
-
-/* ---------- fileira de opções (usada em várias folhas) ----------
-   `soltarEm` (opcional) liga o ARRASTAR: a criança pode puxar a figura até o
-   quadro vazio em vez de só tocar nela. Pedido do Marcos, set/2026:
-   *"da atividade o que vem depois a criança pode tanto clicar como arrastar a
-   imagem até o local"*. As DUAS portas, sempre — no PC da escola ela usa o
-   mouse e arrastar é o gesto natural; no celular, tocar é. */
+/* ---------- fileira de opções (a peça que mais se repete) ----------
+   `soltarEm` (opcional) liga o ARRASTAR: a criança pode puxar a peça até o
+   alvo em vez de só tocar nela. AS DUAS PORTAS, SEMPRE — no PC da escola ela
+   usa o mouse e arrastar é o gesto natural; no celular, tocar é. */
 function opcoes(pai, pi, id, lista, certa, cls, falaCerto, falaDica, aoAcertar, soltarEm){
   registra(id, pi, certa);
   var box = el("div", "ops"), feito = !!ST.resp[id];
@@ -135,12 +110,11 @@ function opcoes(pai, pi, id, lista, certa, cls, falaCerto, falaDica, aoAcertar, 
 /* ---------- PUXAR uma peça até um alvo (mouse, dedo e caneta) ----------
    ⚠️ Pointer Events e não mouse+touch separados: no celular o navegador dispara
    eventos de mouse FANTASMA depois do toque, e foi assim que o arrastar já
-   quebrou duas vezes nesta casa. Aqui o `setPointerCapture` prende o ponteiro
-   no botão e o mesmo código serve para os três.
-   ⚠️ E nada de `preventDefault` no início: isso mataria o toque. Só depois de
-   o dedo ANDAR 8 px é que vira arrasto — antes disso continua sendo um toque
-   normal, e o `onclick` responde igual. */
-var PUXA = null;   /* o arrasto em andamento (um de cada vez) */
+   quebrou duas vezes nesta casa.
+   ⚠️ E nada de `preventDefault` no início: isso mataria o toque. Só depois de o
+   dedo ANDAR 8 px é que vira arrasto — antes disso continua sendo um toque
+   normal e o `onclick` responde igual. */
+var PUXA = null;
 
 function puxavel(bt, alvos, aoSoltar){
   if(!alvos.push) alvos = [alvos];
@@ -149,33 +123,26 @@ function puxavel(bt, alvos, aoSoltar){
     if(ev.button && ev.button !== 0) return;
     PUXA = {bt: bt, alvos: alvos, aoSoltar: aoSoltar,
             x0: ev.clientX, y0: ev.clientY,
-            lx: ev.clientX, ly: ev.clientY,   /* último lugar onde o dedo esteve */
+            lx: ev.clientX, ly: ev.clientY,
             andando: false, fantasma: null};
   });
 }
-
-/* ⚠️⚠️ DUAS LIÇÕES PAGAS AQUI (set/2026), as duas achadas por teste e nenhuma
-   delas dava erro na tela — o arrasto simplesmente não acontecia:
-
-   1. `setPointerCapture` no próprio botão + `pointermove` NELE: só o primeiro
-      movimento chegava. O padrão certo é ouvir no DOCUMENTO — o dedo precisa
-      poder SAIR de cima da peça, que é justamente o que ele faz ao levá-la.
-
-   2. O navegador FUNDE os movimentos (coalescing). Num teste com 8 passos
-      chegou UM `pointermove`, de 5 px. Se eu decidir "isto é um arrasto" pela
-      contagem de movimentos, perco a jogada. Então quem MANDA é a SOLTURA:
-      apertou na peça e soltou em cima do alvo = soltou ali, tenham chegado dez
-      movimentos ou um. O fantasma que segue o dedo é enfeite útil; a resposta
-      não depende dele.
-
-   E um só par de ouvintes no documento, não um por peça: com 18 figuras numa
-   folha eram 18 cópias do mesmo tratador rodando a cada movimento. */
+/* ⚠️⚠️ TRÊS LIÇÕES PAGAS AQUI, e nenhuma delas dava erro na tela — o arrasto
+   simplesmente não acontecia:
+   1. ouvir o `pointermove` no PRÓPRIO botão: só o primeiro movimento chegava.
+      O padrão certo é ouvir no DOCUMENTO — o dedo precisa poder SAIR de cima da
+      peça, que é justamente o que ele faz ao levá-la.
+   2. o navegador FUNDE os movimentos: num teste com oito passos chegou UM
+      `pointermove`. Quem manda é a SOLTURA, não a contagem de movimentos.
+   3. o `pointercancel` chega ANTES do `pointerup` e vem com clientX/clientY
+      = 0,0 — quem usasse a coordenada dele concluiria que a criança soltou no
+      canto da tela. Por isso o último ponto REAL fica guardado. */
 function _puxaAnda(ev){
   var P = PUXA; if(!P) return;
   P.lx = ev.clientX; P.ly = ev.clientY;
   var dx = ev.clientX - P.x0, dy = ev.clientY - P.y0;
   if(!P.andando){
-    if(dx * dx + dy * dy < 64) return;            /* menos de 8 px: ainda é toque */
+    if(dx * dx + dy * dy < 64) return;
     P.andando = true; P.bt._arrastou = true;
     var f = P.bt.cloneNode(true);
     f.className = "fantasma " + P.bt.className;
@@ -198,16 +165,11 @@ function _puxaSolta(ev){
   P.alvos.forEach(function(a){ a.className = a.className.replace(/ ?perto/, ""); });
   P.bt.className = P.bt.className.replace(/ ?puxada/, "");
   if(P.fantasma && P.fantasma.parentNode) P.fantasma.parentNode.removeChild(P.fantasma);
-  /* ⚠️ TERCEIRA LIÇÃO PAGA: o `pointercancel` chega ANTES do `pointerup` e vem
-     com clientX/clientY = 0,0. Quem usasse a coordenada dele concluiria que a
-     criança soltou no canto superior esquerdo da tela — e a peça nunca cairia
-     no lugar. Por isso o último ponto REAL fica guardado (`lx`,`ly`) e é ele
-     que manda quando o evento chega sem posição. */
   var px = ev.clientX, py = ev.clientY;
   if(!px && !py){ px = P.lx; py = P.ly; }
   var onde = {clientX: px, clientY: py};
   var andou = (px - P.x0) * (px - P.x0) + (py - P.y0) * (py - P.y0) >= 64;
-  if(!andou) return;                              /* foi toque, o onclick resolve */
+  if(!andou) return;
   P.bt._arrastou = true;
   var i;
   for(i = 0; i < P.alvos.length; i++){
@@ -215,445 +177,148 @@ function _puxaSolta(ev){
   }
   setTimeout(function(){ P.bt._arrastou = false; }, 60);
 }
-/* e o arrasto NATIVO do navegador fica desligado na atividade inteira: era ele
-   que disparava o `pointercancel` e matava o nosso. */
 document.addEventListener("dragstart", function(ev){ ev.preventDefault(); });
 document.addEventListener("pointermove", _puxaAnda);
 document.addEventListener("pointerup", _puxaSolta);
 document.addEventListener("pointercancel", _puxaSolta);
-
 function sobre(ev, alvo){
   var r = alvo.getBoundingClientRect(), m = 14;
   return ev.clientX >= r.left - m && ev.clientX <= r.right + m &&
          ev.clientY >= r.top - m && ev.clientY <= r.bottom + m;
 }
 
-/* ============ 1 — A FILA DO ALFABETO (sequência alfabética) ============
-   Da folha impressa: *"complete a sequência do alfabeto"* / *"que letra vem
-   depois?"* — está em quase toda folha de 1º ano.
-
-   ⚠️ POR QUE ELA É A FOLHA 1 (parecer pedagógico, set/2026): o currículo de
-   Blumenau abre o 1º ano com *"nomear as letras do alfabeto e ordená-las"*, e a
-   atividade não tinha nenhuma folha disso — o Marcos tinha pedido no encargo
-   ("sequência alfabética") e escapou. Ordenar letra é o degrau anterior a tudo
-   o que vem depois; por isso ela abre o caderno.
-
-   O ANDAIME: mostra-se um pedacinho da fila (três letras) com um buraco no
-   meio, nunca o alfabeto inteiro — carga cognitiva de uma ideia por vez
-   (Sweller). A criança escolhe entre três letras VIZINHAS na fila, que é o que
-   força olhar a ordem em vez de reconhecer a forma. *//* ============================================================
-   AS DEZ FOLHAS DA RIMA
-
-   ⭐ CADA FOLHA VEIO DE UMA FOLHA REAL DE PROFESSOR, e é FIEL a ela: as mesmas
-   palavras, os mesmos distratores, o mesmo comando impresso. As folhas estão em
-   `_sequencias/folhas/` e os itens em `_sequencias/POTE-RIMA.md`, com cada
-   correção justificada.
-
-   O que muda é só o GESTO — porque a folha foi feita para o papel, e transpor
-   direto daria "papel na tela", que é pior que papel: a criança perde o lápis e
-   não ganha nada em troca.
-
-   ⚠️ A ORDEM É A DA CONSCIÊNCIA FONOLÓGICA, não a das folhas: julgar se rima
-   (mais fácil) → escolher entre três → pintar → a pegadinha → circular →
-   arrastar → ligar → completar a parlenda → escrever → inventar.
-   ============================================================ */
-
-/* 1 — RIMA OU NÃO RIMA? (o degrau mais baixo: só JULGAR)
-   ⚠️ Antes de escolher entre três, a criança precisa saber o que "rimar"
-   quer dizer. Aqui ela só ouve duas palavras e diz sim ou não — e as duas
-   palavras SEMPRE têm alto-falante, porque rima é coisa de ouvido: quem
-   decidir pelo desenho está fazendo outra atividade. */
-function f1(d, pi){
-  faixa(d, pi, NOMES[0]);
-  enunciado(d, pi, "Ouça as duas palavras. Elas <b>terminam com o mesmo som</b>?", "p1enun");
-  var L = ST.folha.p1;
-  for(var i = 0; i < L.length; i++){
-    var it = L[i], id = "r1_" + i;
-    var box = item(i + 1);
-    var par = el("div", "parrima");
-    par.appendChild(figComSom(it.a));
-    par.appendChild(el("span", "eou", "e"));
-    par.appendChild(figComSom(it.b));
-    box.appendChild(par);
-    opcoes(box, pi, id, [
-      {v: "sim", rot: "RIMA", aria: "Rima"},
-      {v: "nao", rot: "NÃO RIMA", aria: "Não rima"}
-    ], it.r ? "sim" : "nao", "grande", "certo1_" + it.a + "_" + it.b, "dica1_" + it.a + "_" + it.b);
-    fechaItem(d, box, id, 0);
+function monta(){
+  livro.innerHTML = ""; PAGEL = []; RESP = {}; TIRAS = [];
+  /* ⚠️ UMA ENTRADA POR FOLHA, na ordem, começando pela capa `f0`. */
+  var caps = [f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14,
+             f15, f16, f17, f18, f19, f20, f21, f22, f23, f24, f25, f26, f27,
+             f28, f29, f30, f31, f32, f33, f34, f35], i;
+  for(i = 0; i < caps.length; i++){
+    var d = el("div", "pagina" + (i > 0 ? " " + CORES[i - 1] : "")); d.setAttribute("data-pag", i);
+    caps[i](d, i);
+    if(i > 0) d.appendChild(el("div", "carimbo", "FOLHA<br>PRONTA"));
+    livro.appendChild(d); PAGEL.push(d);
   }
 }
 
-/* a figura com o alto-falante embaixo — o par que a folha 06/17/18 imprime */
-function figComSom(w){
-  var c = el("div", "figsom");
-  c.innerHTML = img(w);
-  c.appendChild(el("span", "rot", esc(w.toUpperCase())));
-  c.appendChild(botaoSom("Ouvir " + esc(w), function(){ falar("pal_" + w); }));
-  return c;
+/* ---------- capa ----------
+   A capa não é enfeite: é a primeira coisa que a criança vê, e é ela que diz
+   "isto aqui é um lugar bom". O tema sai do PROBLEMA do caderno.
+   ⚠️ CAPA CLONADA = TROCAR A CENA, SEMPRE. Numa capa herdada desta casa ficou um
+      `img()` de outra atividade: o app abria com um quadradinho vazio e um 404
+      no console, e nenhum portão de texto viu. */
+function f0(d){
+  var c = el("div", "capa"), nome = "A Máquina de Trocar Sílabas", k, letras = "";
+  for(k = 0; k < nome.length; k++){
+    var ch = nome.charAt(k);
+    letras += ch === " " ? '<span class="esp"></span>'
+      : '<span class="lt" style="animation-delay:' + (0.04 * k).toFixed(2) + 's">' + ch + '</span>';
+  }
+  c.innerHTML =
+    '<div class="ceu"><i class="nv n1"></i><i class="nv n2"></i><i class="nv n3"></i><i class="sol"></i></div>' +
+    '<h1 class="titu">' + letras + '</h1>' +
+    '<div class="sub">Língua Portuguesa &middot; 2º ano &middot; 35 folhas sobre trocar sílabas</div>' +
+    '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
+  d.appendChild(c);
 }
-
-/* 2 — QUAL RIMA COM ESTA? (folhas 06, 17 e 18: "PASSARINHO rima com:")
-   Fiel: a figura grande à esquerda e três figuras à direita, como no papel. */
-function f2(d, pi){
-  faixa(d, pi, NOMES[1]);
-  enunciado(d, pi, "Toque na figura que <b>rima</b> com a de cima.", "p2enun");
-  var L = ST.folha.p2;
-  for(var i = 0; i < L.length; i++){
-    var it = L[i], id = "r2_" + i;
-    var box = item(i + 1);
-    box.appendChild(chamada(it.f, "rima com:"));
-    opcoes(box, pi, id, it.op.map(function(w){
-      return {v: w, rot: img(w, "figop") + '<span class="rotop">' + esc(w.toUpperCase()) + "</span>",
-              aria: w, fala: "pal_" + w};
-    }), it.c, "figbt", "certo2_" + it.f, "dica2_" + it.f);
-    fechaItem(d, box, id, 0);
-  }
-}
-
-/* a chamada da folha: "PASSARINHO rima com:" com a figura e o alto-falante */
-function chamada(w, texto){
-  var c = el("div", "chamrima");
-  c.innerHTML = img(w, "figgrande");
-  var lin = el("div", "chamlin");
-  lin.appendChild(el("b", "", esc(w.toUpperCase()) + " " + texto));
-  lin.appendChild(botaoSom("Ouvir " + esc(w), function(){ falar("pal_" + w); }));
-  c.appendChild(lin);
-  return c;
-}
-
-/* 3 — PINTE A PALAVRA QUE RIMA (folha 08, e o comando dela é PINTAR)
-   ⚠️ FIEL AO PAPEL: aqui as opções são PALAVRAS ESCRITAS, não figuras — é
-   assim que a folha 08 é, e é mais difícil de propósito (a criança lê). O
-   alto-falante em cada uma é o que impede a folha de virar loteria. */
-function f3(d, pi){
-  faixa(d, pi, NOMES[2]);
-  enunciado(d, pi, "<b>Pinte</b> a palavra que rima com a figura.", "p3enun");
-  estojo(d);
-  var L = ST.folha.p3;
-  for(var i = 0; i < L.length; i++){
-    var it = L[i], id = "r3_" + i;
-    var box = item(i + 1);
-    box.appendChild(chamada(it.f, "rima com:"));
-    opcoes(box, pi, id, it.op.map(function(w){
-      return {v: w, rot: esc(w.toUpperCase()), aria: w, fala: "pal_" + w};
-    }), it.c, "pintavel", "certo3_" + it.f, "dica3_" + it.f, function(b){
-      b.style.background = LAPIS[LAPIS_ESCOLHIDO][1];
-      b.style.borderColor = LAPIS[LAPIS_ESCOLHIDO][1];
-      b.style.color = "#fff";
-    });
-    fechaItem(d, box, id, 0);
-  }
-}
-
-/* 4 — CUIDADO COM A PEGADINHA! (folha 18, e a técnica é dela)
-   ⭐ A folha 18 põe BOLA ao lado de BOLSA de propósito: começa igual e NÃO
-   rima. A pesquisa descreve isso como técnica ("pares pegadinha"), e achar a
-   técnica sendo usada numa folha real confirma que é prática de sala.
-   ⚠️ Aqui o erro na pegadinha ganha dica PRÓPRIA, que diz o que olhar: o
-   COMEÇO é igual, mas rima é o FIM. */
-function f4(d, pi){
-  faixa(d, pi, NOMES[3]);
-  enunciado(d, pi, "Uma delas <b>começa</b> parecido mas <b>não rima</b>. Ache a que rima de verdade.", "p4enun");
-  var L = ST.folha.p4;
-  for(var i = 0; i < L.length; i++){
-    var it = L[i], id = "r4_" + i;
-    var box = item(i + 1);
-    box.appendChild(chamada(it.f, "rima com:"));
-    (function(it2, id2){
-      opcoes(box, pi, id2, it2.op.map(function(w){
-        return {v: w, rot: img(w, "figop") + '<span class="rotop">' + esc(w.toUpperCase()) + "</span>",
-                aria: w, fala: "pal_" + w};
-      }), it2.c, "figbt", "certo4_" + it2.f, "dicapeg_" + it2.f);
-    })(it, id);
-    fechaItem(d, box, id, 0);
-  }
-}
-
-/* 5 — CIRCULE AS DUAS QUE RIMAM
-   O comando impresso é CIRCULAR, então aqui se circula de verdade: a criança
-   risca em volta com o dedo (ou toca, que também vale). */
-function f5(d, pi){
-  faixa(d, pi, NOMES[4]);
-  enunciado(d, pi, "<b>Circule</b> as <b>duas</b> figuras que rimam.", "p5enun");
-  var L = ST.folha.p5;
-  for(var i = 0; i < L.length; i++){
-    var it = L[i], id = "r5_" + i;
-    registra(id, pi, it.c.join(","));
-    var box = item(i + 1);
-    var grade = el("div", "gradecirc"), bts = [];
-    it.g.forEach(function(w){
-      var b = el("button", "figcirc", img(w, "figop") + '<span class="rotop">' + esc(w.toUpperCase()) + "</span>");
-      b.setAttribute("data-qa", "circ-" + id + "-" + w);
-      b.setAttribute("aria-label", w);
-      b._w = w;
-      grade.appendChild(b); bts.push(b);
-    });
-    box.appendChild(grade);
-    (function(it2, id2, bts2, grade2){
-      function confere(){
-        var mar = bts2.filter(function(b){ return b.className.indexOf("marcada") >= 0; }).map(function(b){ return b._w; });
-        if(mar.length < 2) return;
-        var ok = mar.length === 2 && it2.c.indexOf(mar[0]) >= 0 && it2.c.indexOf(mar[1]) >= 0;
-        if(ok){ acertou(id2, "certo5_" + it2.c[0]); }
-        else { errou(id2, "dica5_" + it2.c[0]);
-               bts2.forEach(function(b){ b.className = "figcirc"; }); }
-      }
-      riscoDeCircular(grade2, bts2, function(b){
-        if(ST.resp[id2]) return;
-        sPasso(); if(b._w) falar("pal_" + b._w);
-        b.className = b.className.indexOf("marcada") >= 0 ? "figcirc" : "figcirc marcada";
-        setTimeout(confere, 120);
-      });
-    })(it, id, bts, grade);
-    fechaItem(d, box, id, 0);
-  }
-}
-
-/* 6 — PUXE A QUE RIMA ATÉ O PAR
-   ⚠️ TRÊS CAMINHOS, sempre: arrastar com o mouse, arrastar com o dedo e
-   TOCAR. No PC da escola a criança arrasta; no celular, muitas só tocam. */
-function f6(d, pi){
-  faixa(d, pi, NOMES[5]);
-  enunciado(d, pi, "<b>Puxe</b> até a figura de cima a que rima com ela. Tocar também vale.", "p6enun");
-  var L = ST.folha.p6;
-  for(var i = 0; i < L.length; i++){
-    var it = L[i], id = "r6_" + i;
-    var box = item(i + 1);
-    var alvo = el("div", "alvorima", img(it.f, "figgrande") + '<span class="rotop">' + esc(it.f.toUpperCase()) + "</span>");
-    alvo.appendChild(botaoSom("Ouvir " + esc(it.f), (function(w){ return function(){ falar("pal_" + w); }; })(it.f)));
-    box.appendChild(alvo);
-    opcoes(box, pi, id, it.op.map(function(w){
-      return {v: w, rot: img(w, "figop") + '<span class="rotop">' + esc(w.toUpperCase()) + "</span>",
-              aria: w, fala: "pal_" + w};
-    }), it.c, "figbt", "certo6_" + it.f, "dica6_" + it.f, null, alvo);
-    fechaItem(d, box, id, 0);
-  }
-}
-
-/* 7 — LIGUE QUEM RIMA (folhas 14 e 21: "ligue as palavras que rimam")
-   A folha manda LIGAR, então se puxa uma linha de verdade — e ela também
-   aceita tocar de um lado e do outro, para quem não consegue arrastar. */
-function f7(d, pi){
-  faixa(d, pi, NOMES[6]);
-  enunciado(d, pi, "<b>Ligue</b> cada figura à que rima com ela.", "p7enun");
-  var L = ST.folha.p7;
-  for(var i = 0; i < L.length; i++){
-    var g = L[i], cx = el("div", "");
-    montaLigar(cx, pi, "l7g" + i, g.map(function(p){
-      return {k: p.e, w: p.e, wd: p.d,
-              esq: img(p.e, "figop") + '<span class="rotop">' + esc(p.e.toUpperCase()) + "</span>",
-              dir: img(p.d, "figop") + '<span class="rotop">' + esc(p.d.toUpperCase()) + "</span>",
-              fe: "pal_" + p.e, fd: "pal_" + p.d,
-              fc: "certo7_" + p.e, dica: "dica7_" + p.e};
-    }), d);
-    d.appendChild(cx);
-  }
-}
-
-/* 8 — COMPLETE A PARLENDA
-   ⭐ ESTE É O OBJETIVO F DO CURRÍCULO, e ele é de ORALIDADE: *"recitar
-   parlendas, quadras, quadrinhas… observando as rimas"*. A criança já sabe
-   estas parlendas de cor — e é justamente por isso que ela funciona: a boca
-   completa antes de a cabeça explicar, e aí ela DESCOBRE que sabia de rima
-   sem saber o nome. */
-function f8(d, pi){
-  faixa(d, pi, NOMES[7]);
-  enunciado(d, pi, "Ouça a parlenda e escolha a palavra que <b>fecha a rima</b>.", "p8enun");
-  var L = ST.folha.p8;
-  for(var i = 0; i < L.length; i++){
-    var it = L[i], id = "r8_" + i;
-    var box = item(i + 1);
-    var lin = el("div", "parlenda");
-    lin.innerHTML = esc(it.t).replace("###", '<span class="lacuna">?</span>');
-    box.appendChild(lin);
-    box.appendChild(botaoSom("Ouvir a parlenda", (function(k){ return function(){ falar(k); }; })("parl_" + i)));
-    opcoes(box, pi, id, it.op.map(function(w){
-      return {v: w, rot: esc(w.toUpperCase()), aria: w, fala: "pal_" + w};
-    }), it.c, "grande", "certo8_" + i, "dica8_" + i, function(b){
-      var lc = lin.querySelector(".lacuna");
-      if(lc){ lc.className = "lacuna cheia"; lc.innerHTML = b.textContent; }
-    });
-    fechaItem(d, box, id, 0);
-  }
-}
-
-/* 9 — ESCREVA A PALAVRA QUE RIMA
-   ⚠️ AS DUAS PORTAS (regra do Marcos): teclado na tela E teclado de verdade.
-   No PC da escola tem teclado e a criança vai digitar; no celular, não tem. */
-function f9(d, pi){
-  faixa(d, pi, NOMES[8]);
-  enunciado(d, pi, "<b>Escreva</b> a palavra que rima com a figura.", "p9enun");
-  var L = ST.folha.p9;
-  for(var i = 0; i < L.length; i++){
-    var it = L[i], id = "r9_" + i;
-    var box = item(i + 1);
-    box.appendChild(chamada(it.f, "rima com:"));
-    (function(it2, id2, box2){
-      registra(id2, pi, it2.c);
-      var q = el("div", "sq vaga larga" + (ST.resp[id2] ? " ok" : ""), ST.resp[id2] ? it2.c : "");
-      q.id = id2; q.setAttribute("role", "button"); q.setAttribute("tabindex", "0");
-      q.setAttribute("data-qa", "vaga-" + id2);
-      q.setAttribute("aria-label", "Escreva a palavra que rima com " + esc(it2.f));
-      q.onclick = function(){
-        if(ST.resp[id2]) return;
-        sPasso();
-        ativa(q, it2.c, id2, "certo9_" + it2.f, "dica9_" + it2.f);
-        document.getElementById("tkDica").textContent = "Escreva a palavra que rima";
-      };
-      q.onkeydown = function(ev){ if(ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); q.onclick(); } };
-      var lin = el("div", "linhaop"); lin.appendChild(q); box2.appendChild(lin);
-    })(it, id, box);
-    fechaItem(d, box, id, 0);
-  }
-}
-
-/* 10 — A RIMA QUE EU ESCOLHI (o fecho, e ele GUARDA o que ela fez)
-   ⭐ Regra 11 da pesquisa: a tela final mostra o que a CRIANÇA fez, não só a
-   nota. Aqui ela monta o próprio mural de rimas, e ele fica no relatório. */
-function f10(d, pi){
-  faixa(d, pi, NOMES[9]);
-  enunciado(d, pi, "Toque nos pares que você mais gostou. Eles vão para o seu <b>mural de rimas</b>.", "p10enun");
-  var L = ST.folha.p10;
-  var mural = el("div", "mural");
-  for(var i = 0; i < L.length; i++){
-    var it = L[i], id = "r10_" + i;
-    registra(id, pi, it.par);
-    (function(it2, id2){
-      var cartao = el("button", "cartaorima",
-        img(it2.f, "figop") + '<span class="rotop">' + esc(it2.f.toUpperCase()) + "</span>" +
-        '<span class="mais">+</span>' +
-        img(it2.par, "figop") + '<span class="rotop">' + esc(it2.par.toUpperCase()) + "</span>");
-      cartao.setAttribute("data-qa", "mural-" + id2);
-      cartao.setAttribute("aria-label", it2.f + " e " + it2.par);
-      cartao.onclick = function(){
-        if(ST.resp[id2]) return;
-        sPasso(); falar("pal_" + it2.f);
-        setTimeout(function(){ falar("pal_" + it2.par); }, 700);
-        cartao.className = "cartaorima escolhido";
-        acertou(id2, "certo10_" + it2.f);
-      };
-      if(ST.resp[id2]) cartao.className = "cartaorima escolhido";
-      mural.appendChild(cartao);
-    })(it, id);
-  }
-  d.appendChild(mural);
-}
-function riscoDeCircular(grade, botoes, alterna){
-  var cv = document.createElement("canvas");
-  cv.className = "riscocv"; grade.appendChild(cv);
-  var ctx = cv.getContext("2d"), pts = [], riscando = false, ultRisco = 0;
-  function tamanho(){
-    var r = grade.getBoundingClientRect();
-    if(!r.width) return;
-    cv.width = r.width; cv.height = r.height;
-    cv.style.width = r.width + "px"; cv.style.height = r.height + "px";
-  }
-  function pinta(){
-    ctx.clearRect(0, 0, cv.width, cv.height);
-    if(pts.length < 2) return;
-    ctx.strokeStyle = "#e0562f"; ctx.lineWidth = 5;
-    ctx.lineCap = "round"; ctx.lineJoin = "round";
-    ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
-    for(var k = 1; k < pts.length; k++) ctx.lineTo(pts[k].x, pts[k].y);
-    ctx.stroke();
-  }
-  function ponto(ev){
-    var r = cv.getBoundingClientRect();
-    return {x: ev.clientX - r.left, y: ev.clientY - r.top};
-  }
-  grade.addEventListener("pointerdown", function(ev){
-    /* ⚠️ no dedo o traço não começa (rolar a página é mais importante);
-       quem atende o toque é o clique de cada botão, ligado lá embaixo. */
-    if(ev.pointerType === "touch") return;
-    tamanho(); riscando = true; pts = [ponto(ev)];
-    cv.className = "riscocv ativo";
-    try { grade.setPointerCapture(ev.pointerId); } catch(e){}
+function gavetas(d, pi, gk, pede){
+  faixa(d, pi, NOMES[pi - 1]);
+  var G = GAV[gk];
+  enunciado(d, pi, pede, "p" + pi + "enun");
+  var cols = el("div", "colunas"), caixas = {}, listaC = [];
+  G.cols.forEach(function(C){
+    var c = el("div", "coluna");
+    var t = el("div", "ctit", C.n);
+    t.setAttribute("data-alvo", "1");
+    /* ⚠️ o alvo é COMPARTILHADO pela folha inteira, então ele se declara no
+       nível da página — e com o número da folha no nome, porque as 22 folhas
+       moram no mesmo HTML e o jogador da banca busca por `document.querySelector`. */
+    c.setAttribute("data-qa", "alvo-gav" + pi + "_" + C.k);
+    t.appendChild(botaoSom("Ouvir a regra desta gaveta", function(){ falar("gav_" + gk + "_" + C.k); }));
+    c.appendChild(t);
+    var dentro = el("div", "cdentro");
+    c.appendChild(dentro);
+    c._v = C.k; c._dentro = dentro;
+    caixas[C.k] = c; listaC.push(c);
+    cols.appendChild(c);
   });
-  grade.addEventListener("pointermove", function(ev){
-    if(!riscando) return;
-    pts.push(ponto(ev)); pinta();
-  });
-  function fim(){
-    if(!riscando) return;
-    riscando = false; cv.className = "riscocv";
-    var comp = 0, k;
-    for(k = 1; k < pts.length; k++)
-      comp += Math.abs(pts[k].x - pts[k-1].x) + Math.abs(pts[k].y - pts[k-1].y);
-    if(comp > 60){
-      var r0 = cv.getBoundingClientRect(), w;
-      for(w in botoes){
-        var rb = botoes[w].getBoundingClientRect();
-        if(dentro(pts, rb.left - r0.left + rb.width / 2, rb.top - r0.top + rb.height / 2)){
-          /* ⚠️ ARRAY dá ÍNDICE, OBJETO dá CHAVE — e a resposta de quem monta
-             espera o BOTÃO quando passou um array. Sem esta linha, `alterna`
-             recebia "0" no lugar do elemento, `b._w` era undefined e circular
-             a resposta CERTA caía no ramo do erro. Sempre. */
-          ultRisco = Date.now();
-          alterna(botoes.length !== undefined ? botoes[w] : w);
-        }
+  d.appendChild(cols);
+  var banco = el("div", "figbanco"), marcada = null;
+  ST.folha["p" + pi].forEach(function(n, i){
+    var P = G.pal[n], id = "n" + pi + "_" + i;
+    registra(id, pi, ">gav" + pi + "_" + P.c);
+    var b = el("button", "op pal" + (ST.resp[id] ? " usada" : ""), P.p);
+    b.setAttribute("aria-label", P.p);
+    b.setAttribute("data-qa", "item-" + id);
+    /* a palavra escrita é a PEÇA que a criança pega, não a resposta entregue */
+    b.setAttribute("data-alvo", "1");
+    if(ST.resp[id]) caixas[P.c]._dentro.appendChild(el("span", "fdentro", P.p));
+    function larga(col){
+      if(ST.resp[id]) return;
+      if(col._v === P.c){
+        b.className = "op pal usada";
+        col._dentro.appendChild(el("span", "fdentro", P.p));
+        if(marcada === b) marcada = null;
+        acertou(id, "certo" + pi + "_" + n);
+      } else {
+        col.className = "coluna erro";
+        setTimeout(function(){ col.className = "coluna"; }, 500);
+        errou(id, "dica" + pi + "_" + n);
       }
     }
-    pts = []; ctx.clearRect(0, 0, cv.width, cv.height);
-  }
-  grade.addEventListener("pointerup", fim);
-  grade.addEventListener("pointercancel", fim);
-  grade.addEventListener("pointerleave", fim);
-
-  /* ⭐ A SEGUNDA PORTA (regra da casa: nunca só uma). Circular com o rato é o
-     gesto que a folha de papel pede; tocar é o gesto que o celular tem. Este
-     `click` atende os dois — o toque simples e o clique do rato do PC.
-     ⚠️ O guarda de 400 ms existe porque soltar o traço EM CIMA de um botão
-        também dispara `click`: sem ele, circular contaria duas vezes. */
-  (function(){
-    var k;
-    for(k in botoes) (function(w){
-      var e = botoes[w];
-      if(!e || !e.addEventListener) return;
-      e.addEventListener("click", function(){
-        if(Date.now() - ultRisco < 400) return;
-        alterna(botoes.length !== undefined ? e : w);
-      });
-    })(k);
-  })();
-}
-/* ponto dentro do rabisco: conta quantas vezes uma reta para a direita cruza o
-   traço (fechando o último ponto no primeiro). Ímpar = está dentro. */
-function dentro(pts, x, y){
-  var n = pts.length, cruz = false, i, j;
-  if(n < 3) return false;
-  for(i = 0, j = n - 1; i < n; j = i++){
-    var yi = pts[i].y, yj = pts[j].y, xi = pts[i].x, xj = pts[j].x;
-    if(((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) cruz = !cruz;
-  }
-  return cruz;
-}
-
-/* ============ 4 — CIRCULE QUEM COMEÇA IGUAL (sílaba inicial) ============
-   Da folha: *"circule os desenhos que se iniciam com a sílaba CA"* (d12/d02). */var LAPIS = [
-  {n: "roxo",    c: "#7c3aed", claro: "#ede9fe"},
-  {n: "laranja", c: "#ea580c", claro: "#ffedd5"},
-  {n: "verde",   c: "#0f9d58", claro: "#dcfce7"},
-  {n: "rosa",    c: "#db2777", claro: "#fce7f3"}
-];
-var LAPIS_ESCOLHIDO = 0;
-
-function estojo(pai){
-  var cx = el("div", "estojo");
-  cx.appendChild(el("span", "rot", "Escolha a cor:"));
-  LAPIS.forEach(function(L, k){
-    var b = el("button", "lapis" + (k === LAPIS_ESCOLHIDO ? " esc" : ""));
-    b.style.background = L.c;
-    b.setAttribute("aria-label", "Canetinha " + L.n);
-    b.setAttribute("data-qa", "lapis-" + L.n);
+    b._larga = larga;
     b.onclick = function(){
-      LAPIS_ESCOLHIDO = k; sPasso();
-      var ir = cx.childNodes, j;
-      for(j = 1; j < ir.length; j++) ir[j].className = "lapis" + (j - 1 === k ? " esc" : "");
+      if(b._arrastou){ b._arrastou = false; return; }
+      if(ST.resp[id]) return;
+      sPasso(); falar("diz2_" + gk + "_" + n);
+      if(marcada === b){ b.className = "op pal"; marcada = null; return; }
+      if(marcada) marcada.className = "op pal";
+      b.className = "op pal marcada"; marcada = b;
     };
-    cx.appendChild(b);
+    puxavel(b, listaC, function(col){ larga(col); });
+    banco.appendChild(b);
   });
-  pai.appendChild(cx);
+  listaC.forEach(function(col){
+    col.onclick = function(){
+      if(!marcada){ sPasso(); falar("toque_palavra"); return; }
+      marcada._larga(col);
+    };
+  });
+  d.appendChild(banco);
 }
+
+/* ============================================================
+   AS FOLHAS — escrever daqui para baixo, uma função por folha.
+
+   O MOLDE de uma folha de escolher:
+
+     function f01(d, pi){
+       faixa(d, pi, NOMES[pi - 1]);
+       enunciado(d, pi, "O que a criança tem de fazer.", "p" + pi + "enun");
+       ST.folha["p" + pi].forEach(function(k, i){
+         var D = MEUDADO[k], id = "n" + pi + "_" + i, box = item(i + 1);
+         // … desenhar a peça …
+         opcoes(box, pi, id, lista, certa, "pal",
+                "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+         fechaItem(d, box, id);
+       });
+     }
+
+   ⚠️ E CADA PEÇA TEM DE SER ALCANÇÁVEL PELO JOGADOR DA BANCA, senão a folha sai
+      como dívida e ninguém a mede. Os contratos, em `_qa/joga_folha.js`:
+        `esc-<id>`            → campo de teclado
+        `op-<id>-<valor>`     → uma escolha
+        `item-<id>` + `>gav`  → pegar a peça e largar na gaveta
+        `pinta-<id>-<x>` + `data-lapis="<x>"` e o estojo `lapis-<x>` → pintar
+        `cp-<id>-a` / `cp-<id>-z` → as duas pontas da palavra no caça-palavras
+        `conferir-<id>`       → marque vários e confirme
+   ============================================================ */
+/* ---------- o teclado da palavra: uma por vez, letra a letra ----------
+   ⚠️ UMA PEÇA SÓ PARA A CRUZADINHA (22) E PARA O REESCREVA (19). As duas
+   escrevem palavra letra a letra; escrever dois teclados seria arrumar lugar
+   para um segundo defeito. O que muda entre elas é só o rótulo da tarja —
+   daí o `E.rot`. */
+var CRUZ = null;
 /* ---------- ROLAR A PALAVRA PARA CIMA DO TECLADO ----------
    ⚠️⚠️ O TECLADO TAPAVA A ATIVIDADE, e o Marcos viu no celular (15/set/2026):
       *"ele preenche a tela e não dá para ver a atividade"*. Medido: na
@@ -726,6 +391,91 @@ function rolaParaCruz(){
   }
   if(Math.abs(d) > 2) window.scrollBy(0, d);
 }
+function abreCruz(E, pi){
+  if(CRUZ) fechaCruz();
+  CRUZ = {E: E, val: "", pi: pi};
+  if(E.bt) E.bt.className = E.bt.className.indexOf("oculta") > -1 ? "pista oculta" : "pista ativa";
+  pintaCruz();
+  document.getElementById("teclado").className = "aberto";
+  /* ⚠️ ROLAR A PALAVRA PARA CIMA DO TECLADO. Sem isto a criança escreve às
+     cegas: o teclado é fixo no pé da tela e a grade fica embaixo dele (medido
+     em 360x640: a grade inteira por baixo). O `comtec` dá chão para a página
+     poder rolar; o resto é levar a primeira casinha para a faixa que sobra. */
+  document.body.className = (document.body.className.replace(/ ?comtec/, "") + " comtec").replace(/^ /, "");
+  setTimeout(rolaParaCruz, 60);
+  document.getElementById("tkDica").textContent = E.rot || ("Escreva a palavra da pista " + E.n);
+  falar("escreva");
+}
+function fechaCruz(){
+  if(!CRUZ) return;
+  var E = CRUZ.E;
+  if(!ST.resp[E.id]){
+    E.cels.forEach(function(c){ if(c){ var n = c.querySelector(".cn"); c.textContent = ""; if(n) c.appendChild(n); c.className = "ccel viva"; } });
+    if(E.bt) E.bt.className = E.bt.className.indexOf("oculta") > -1 ? "pista oculta" : "pista";
+  }
+  CRUZ = null; document.getElementById("teclado").className = "";
+  document.body.className = document.body.className.replace(/ ?comtec/, "");
+}
+function pintaCruz(){
+  var E = CRUZ.E, v = CRUZ.val;
+  E.cels.forEach(function(c, i){
+    if(!c) return;
+    var n = c.querySelector(".cn");
+    c.textContent = v.charAt(i) || "";
+    if(n) c.appendChild(n);
+    c.className = "ccel viva" + (i === v.length ? " ativa" : "");
+  });
+}
+function digitaCruz(ch){
+  if(!CRUZ) return;
+  sTecla();
+  var E = CRUZ.E;
+  if(ch === "ap") CRUZ.val = CRUZ.val.slice(0, -1);
+  else if(ch === "ok"){ confereCruz(); return; }
+  else { if(CRUZ.val.length >= E.w.length) return; CRUZ.val += ch; }
+  pintaCruz(); rolaParaCruz();
+  if(CRUZ.val.length >= E.w.length) setTimeout(confereCruz, 380);
+}
+/* ⚠️⚠️ O ACENTO NÃO PODE REPROVAR QUEM ACERTOU A PALAVRA (ordem do Marcos,
+   15/set/2026, com a turma na sala: *"faça que tanto com o sem dê certo"*).
+   O gabarito de BACTERIAS estava sem acento e o teclado da tela TEM os acentos:
+   a criança que escrevia BACTÉRIAS — que é o certo em português — era recusada,
+   e ficava olhando para uma palavra certa marcada como errada. O contrário
+   também acontecia, em caderno cujo gabarito vinha acentuado.
+   ⚠️ E ONDE O ACENTO É O CONTEÚDO, ele continua contando: a folha declara
+      `exigeAcento` e aí a comparação é letra por letra, acento incluído. */
+function semAcento(s){
+  s = String(s || "").toUpperCase();
+  var de = "ÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇ", para = "AAAAAEEEEIIIIOOOOOUUUUC", i, o = "";
+  for(i = 0; i < s.length; i++){
+    var n = de.indexOf(s.charAt(i));
+    o += n > -1 ? para.charAt(n) : s.charAt(i);
+  }
+  return o;
+}
+function mesmaPalavra(a, b, exigeAcento){
+  if(exigeAcento) return String(a).toUpperCase() === String(b).toUpperCase();
+  return semAcento(a) === semAcento(b);
+}
+function confereCruz(){
+  if(!CRUZ || !CRUZ.val) return;
+  var E = CRUZ.E, pi = CRUZ.pi;
+  if(mesmaPalavra(CRUZ.val, E.w, E.exigeAcento)){
+    E.cels.forEach(function(c, i){
+      if(!c) return;
+      var n = c.querySelector(".cn");
+      c.textContent = E.w.charAt(i); if(n) c.appendChild(n);
+      c.className = "ccel viva ok";
+    });
+    if(E.bt) E.bt.className = E.bt.className.indexOf("oculta") > -1 ? "pista oculta" : "pista feita";
+    CRUZ = null; document.getElementById("teclado").className = "";
+  document.body.className = document.body.className.replace(/ ?comtec/, "");
+    acertou(E.id, "certo" + pi + "_" + E.k);
+  } else {
+    CRUZ.val = ""; pintaCruz();
+    errou(E.id, "dica" + pi + "_" + E.k);
+  }
+}
 function montaLigar(caixa, pi, tag, pares, pagina){
   var box = el("div", "ligar"), ce = el("div", "col"), cd = el("div", "col");
   var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("class", "linhas");
@@ -737,25 +487,17 @@ function montaLigar(caixa, pi, tag, pares, pagina){
     var r = e.getBoundingClientRect(), b = box.getBoundingClientRect();
     return {x: (lado === "e" ? r.right : r.left) - b.left, y: r.top + r.height / 2 - b.top};
   }
-  /* ⭐ O TRAÇO (pedido do Marcos, set/2026: *"melhore o traço que liga para
-     parecer mais profissional"*). Antes era um segmento reto de ponta a ponta.
-     Agora é uma CURVA suave — sai na horizontal de cada caixa e vira no meio,
-     como o cabo de um painel — com um halo branco por baixo (para o traço não
-     sumir quando passa por cima de outra caixa) e um pontinho cheio em cada
-     ponta, que é o que dá o acabamento de "ligado". */
   function linha(a, b2, cor){
     var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
     var dx = Math.max(28, Math.abs(b2.x - a.x) * 0.45);
-    var d = "M" + a.x + "," + a.y +
-            " C" + (a.x + dx) + "," + a.y +
-            " " + (b2.x - dx) + "," + b2.y +
-            " " + b2.x + "," + b2.y;
+    var dd = "M" + a.x + "," + a.y + " C" + (a.x + dx) + "," + a.y + " " +
+             (b2.x - dx) + "," + b2.y + " " + b2.x + "," + b2.y;
     var halo = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    halo.setAttribute("d", d); halo.setAttribute("fill", "none");
+    halo.setAttribute("d", dd); halo.setAttribute("fill", "none");
     halo.setAttribute("stroke", "#ffffff"); halo.setAttribute("stroke-width", 11);
     halo.setAttribute("stroke-linecap", "round");
     var l = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    l.setAttribute("d", d); l.setAttribute("fill", "none");
+    l.setAttribute("d", dd); l.setAttribute("fill", "none");
     l.setAttribute("stroke", cor); l.setAttribute("stroke-width", 6);
     l.setAttribute("stroke-linecap", "round");
     g.appendChild(halo); g.appendChild(l);
@@ -792,7 +534,7 @@ function montaLigar(caixa, pi, tag, pares, pagina){
     var e = el("div", "ponta" + (ST.lig["l" + pi + tag + "_" + P.k] ? " feita" : ""), P.esq);
     e.setAttribute("role", "button"); e.setAttribute("tabindex", "0");
     e.setAttribute("data-qa", "lig" + tag + "-e-" + P.k);
-    e.setAttribute("aria-label", esc(P.w));
+    e.setAttribute("aria-label", P.ariaE);
     var R = {k: P.k, el: e, fc: P.fc, dica: P.dica};
     E[P.k] = R;
     e.addEventListener("pointerdown", function(ev){
@@ -807,7 +549,7 @@ function montaLigar(caixa, pi, tag, pares, pagina){
     var e = el("div", "ponta" + (ST.lig["l" + pi + tag + "_" + P.k] ? " feita" : ""), P.dir);
     e.setAttribute("role", "button"); e.setAttribute("tabindex", "0");
     e.setAttribute("data-qa", "lig" + tag + "-d-" + P.k);
-    e.setAttribute("aria-label", esc(P.wd || P.k));
+    e.setAttribute("aria-label", P.ariaD);
     var R = {k: P.k, el: e}; D[P.k] = R;
     e.addEventListener("pointerdown", function(ev){
       if(e.className.indexOf("feita") > -1) return;
@@ -819,94 +561,104 @@ function montaLigar(caixa, pi, tag, pares, pagina){
   });
 }
 
-/* ---------- teclado de letras (folha 8) ---------- */function ativa(q, certa, id, fc, fd){
-  if(ATIVA) fechaAtiva();
-  ATIVA = {q: q, val: "", certa: certa, id: id, fc: fc, fd: fd};
-  q.className = "sq vaga ativa";
-  q.innerHTML = '<span class="v"></span><span class="cursor"></span>';
-  document.getElementById("teclado").className = "aberto";
-  /* ⚠️ ROLAR A PALAVRA PARA CIMA DO TECLADO. Sem isto a criança escreve às
-     cegas: o teclado é fixo no pé da tela e a grade fica embaixo dele (medido
-     em 360x640: a grade inteira por baixo). O `comtec` dá chão para a página
-     poder rolar; o resto é levar a primeira casinha para a faixa que sobra. */
-  document.body.className = (document.body.className.replace(/ ?comtec/, "") + " comtec").replace(/^ /, "");
-  setTimeout(rolaParaCruz, 60);
-  document.getElementById("tkDica").textContent = "Escreva a sílaba que falta";
-  falar("escreva");
-}
-function fechaAtiva(){
-  if(!ATIVA) return;
-  if(!ST.resp[ATIVA.id]){ ATIVA.q.className = "sq vaga"; ATIVA.q.textContent = ""; }
-  ATIVA = null; document.getElementById("teclado").className = "";
-  document.body.className = document.body.className.replace(/ ?comtec/, "");
-}
-function digita(ch){
-  if(!ATIVA) return;
-  sTecla();
-  if(ch === "ap") ATIVA.val = ATIVA.val.slice(0, -1);
-  else if(ch === "ok") return confereSil();
-  else { if(ATIVA.val.length >= 4) return; ATIVA.val += ch; }
-  var v = ATIVA.q.querySelector(".v"); if(v) v.textContent = ATIVA.val;
-  if(ATIVA.val.length >= ATIVA.certa.length) setTimeout(confereSil, 380);
-}
-function confereSil(){
-  if(!ATIVA || !ATIVA.val) return;
-  var A = ATIVA;
-  if(A.val === A.certa){
-    A.q.className = "sq ok"; A.q.textContent = A.certa;
-    ATIVA = null; document.getElementById("teclado").className = "";
-    document.body.className = document.body.className.replace(/ ?comtec/, "");
-    acertou(A.id, A.fc);
-    var it = A.q.parentNode.parentNode; if(it) it.className = "item feito";
-  } else {
-    A.val = ""; var v = A.q.querySelector(".v"); if(v) v.textContent = "";
-    errou(A.id, A.fd);
-  }
-}
-(function(){
-  var tk = document.getElementById("tk");
-  /* ⚠️ O K, O W E O Y ESTAVAM DE FORA — e num caderno cujo assunto É o
-     alfabeto de 26 letras isso não é detalhe: o pote da folha de digitar
-     sorteia as 26, e em três delas a criança batia num teclado que não
-     tinha a tecla. Ela acertava de cabeça e não conseguia responder.
-     (As três entraram no alfabeto oficial do português em 2009.)
-     Quem pegou foi o `_qa/joga_folha.js`: um item de cinco não fechava. */
-  var letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÀÂÃÉÊÍÓÔÕÚÜÇ".split("");
-  letras.forEach(function(L){
-    var b = el("button", null, L);
-    b.setAttribute("aria-label", "Letra " + L);
-    b.onclick = function(){ digita(L); };
-    tk.appendChild(b);
+/* ---------- o teclado da tela, e o teclado DE VERDADE ----------
+   ⚠️⚠️ O ALFABETO ESTAVA INCOMPLETO, E ISSO TRANCAVA A CRIANÇA (15/set/2026).
+   Faltavam K, W e Y — e, pior, faltavam Ê, Â, Ã, Ô, Õ, À e Ü. Quem tentasse
+   escrever PÊSSEGO no teclado da tela ou no teclado de verdade ficava com
+   "PSSEGO": a tecla não existia, a letra não entrava, e a folha NUNCA FECHAVA.
+   Não havia erro nenhum no console; a criança só tentava de novo até desistir.
+   Medido com o navegador de verdade, letra por letra, antes deste conserto.
+   ⚠️ Quem fecha esta família agora é o portão `_qa/teclado.py`: ele confere que
+      o alfabeto tem as 26 letras e os treze acentos do português, e que o
+      teclado da tela e o filtro do teclado de verdade usam o MESMO alfabeto —
+      porque dois alfabetos diferentes é o mesmo defeito com uma porta só.
+   ⚠️ REGRA DAS DUAS PORTAS (Marcos, ago/2026): *"seria interessante se o aluno
+   além de teclar no teclado virtual funcionasse se ele tocasse no teclado de
+   verdade, as duas opções"*. No PC da escola tem teclado e a criança vai
+   digitar; no celular, não tem. Nunca só uma porta. */
+/* ============================================================
+   O TECLADO DO APARELHO — substitui o teclado de 41 teclas da casa.
+
+   ⭐ ORDEM DO MARCOS (15/set/2026): *"pode remover o teclado das atividades,
+      melhor digitar com teclado normal"*. O nosso ocupava 53% de um celular de
+      640 px, e mesmo redistribuído para 4 fileiras ainda comia 40%.
+
+   ⚠️ O QUE ELE RESOLVE E O QUE NÃO RESOLVE, dito por inteiro: no PC da escola o
+      teclado físico já funcionava (as duas portas são regra da casa desde
+      ago/2026) — o campo abaixo não muda nada lá. Ele existe pelo CELULAR, que
+      não tem teclado físico: sem um campo de verdade para focar, o aparelho não
+      abre teclado nenhum e a criança fica trancada.
+   ============================================================ */
+var TECIN = null;
+function campoTeclado(){
+  if(TECIN) return TECIN;
+  TECIN = document.createElement("input");
+  TECIN.id = "tecIn";
+  TECIN.type = "text";
+  TECIN.setAttribute("autocomplete", "off");
+  TECIN.setAttribute("autocorrect", "off");
+  TECIN.setAttribute("autocapitalize", "characters");
+  TECIN.setAttribute("spellcheck", "false");
+  TECIN.setAttribute("aria-label", "Escreva a palavra");
+  TECIN.setAttribute("inputmode", "text");
+  /* ⚠️ O EVENTO É `input`, NÃO `keydown`: no celular o teclado do sistema não
+     dispara keydown com a letra (ele "compõe" o texto), e um caderno que só
+     ouvisse keydown seria mudo justamente no aparelho para o qual este campo
+     existe. */
+  TECIN.addEventListener("input", function(){
+    if(!CRUZ) return;
+    var v = (TECIN.value || "").toUpperCase();
+    var teto = CRUZ.E.aceita ? CRUZ.E.cels.length : CRUZ.E.w.length;
+    if(v.length > teto) v = v.slice(0, teto);
+    CRUZ.val = v; TECIN.value = v;
+    pintaCruz();
+    if(!CRUZ.E.aceita && CRUZ.val.length >= CRUZ.E.w.length) setTimeout(confereCruz, 380);
   });
-  var ap = el("button", "ap", "apagar"); ap.setAttribute("aria-label", "Apagar");
-  ap.onclick = function(){ digita("ap"); }; tk.appendChild(ap);
-  var ok = el("button", "ok", "OK"); ok.setAttribute("aria-label", "Confirmar");
-  ok.onclick = function(){ digita("ok"); }; tk.appendChild(ok);
-})();
+  TECIN.addEventListener("keydown", function(ev){
+    if(ev.key === "Enter"){ ev.preventDefault(); confereCruz(); }
+    else if(ev.key === "Escape"){ fechaCruz(); }
+  });
+  TECIN.addEventListener("blur", function(){
+    /* sair do campo não perde o que já foi escrito — só fecha a caneta */
+    setTimeout(function(){ if(CRUZ && document.activeElement !== TECIN) fechaCruz(); }, 120);
+  });
+  document.body.appendChild(TECIN);
+  return TECIN;
+}
+function poeCampoSobre(grade){
+  var c = campoTeclado();
+  if(grade && grade.parentNode){
+    if(c.parentNode !== grade) grade.appendChild(c);
+    c.style.left = "0"; c.style.top = "0";
+    c.style.width = "100%"; c.style.height = "100%";
+  }
+  return c;
+}
 document.addEventListener("keydown", function(ev){
-  if(!ATIVA) return;
+  if(!CRUZ) return;
   if(document.activeElement && document.activeElement.id === "nomeIn") return;
   var k = (ev.key || "").toUpperCase();
-  if(k.length === 1 && "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÀÂÃÉÊÍÓÔÕÚÜÇ".indexOf(k) > -1){ ev.preventDefault(); digita(k); }
-  else if(ev.key === "Backspace"){ ev.preventDefault(); digita("ap"); }
-  else if(ev.key === "Enter"){ ev.preventDefault(); digita("ok"); }
-  else if(ev.key === "Escape"){ fechaAtiva(); }
+  if(k.length === 1 && "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÀÂÃÉÊÍÓÔÕÚÜÇ".indexOf(k) > -1){ ev.preventDefault(); digitaCruz(k); }
+  else if(ev.key === "Backspace"){ ev.preventDefault(); digitaCruz("ap"); }
+  else if(ev.key === "Enter"){ ev.preventDefault(); digitaCruz("ok"); }
+  else if(ev.key === "Escape"){ fechaCruz(); }
 });
 
 /* ---------- folha pronta e navegação ---------- */
 function idsDaPagina(pi){
-  var ids = [], i, k, F = ST.folha;
-  if(pi === 1) for(i = 0; i < F.p1.length; i++) ids.push("r1_" + i);
-  if(pi === 2) for(i = 0; i < F.p2.length; i++) ids.push("r2_" + i);
-  if(pi === 3) for(i = 0; i < F.p3.length; i++) ids.push("r3_" + i);
-  if(pi === 4) for(i = 0; i < F.p4.length; i++) ids.push("r4_" + i);
-  if(pi === 5) for(i = 0; i < F.p5.length; i++) ids.push("r5_" + i);
-  if(pi === 6) for(i = 0; i < F.p6.length; i++) ids.push("r6_" + i);
-  if(pi === 7) for(i = 0; i < F.p7.length; i++) for(k = 0; k < F.p7[i].length; k++) ids.push("l7g" + i + "_k" + k);
-  if(pi === 8) for(i = 0; i < F.p8.length; i++) ids.push("r8_" + i);
-  if(pi === 9) for(i = 0; i < F.p9.length; i++) ids.push("r9_" + i);
-  if(pi === 10) for(i = 0; i < F.p10.length; i++) ids.push("r10_" + i);
-  if(pi === 11) for(i = 0; i < F.p11.length; i++) for(k = 0; k < F.p11[i].length; k++) ids.push("r11_" + i + "_" + F.p11[i][k]);
+  /* ⚠️⚠️ ISTO JÁ MENTIU DUAS VEZES NESTA CASA. Antes, cada folha gravava `n6_0`
+     à mão e esta função dizia à mão que a página 6 tinha ids `n6_`. Eram DOIS
+     lugares a combinar, os dois sintaticamente corretos, e quando a ordem das
+     folhas mudava o relatório saía ZERO com a folha toda respondida — sem erro
+     nenhum no console. Agora o id NASCE DA POSIÇÃO e aqui se lê a mesma
+     posição; a única forma diferente é o LIGAR, que se declara na constante. */
+  var ids = [], i, k, L = (ST.folha["p" + pi] || []);
+  if(LIGAR.indexOf(pi) > -1){
+    for(i = 0; i < L.length; i++)
+      for(k = 0; k < L[i].length; k++) ids.push("l" + pi + "g" + i + "_" + L[i][k]);
+    return ids;
+  }
+  for(i = 0; i < L.length; i++) ids.push("n" + pi + "_" + i);
   return ids;
 }
 function pendentes(pi){
@@ -922,16 +674,11 @@ function confereFolha(pi){
   else setTimeout(fim, 1400);
   atualizaNav();
 }
-/* ⚠️ O nome NÃO se repete na capa (pedido do Marcos, set/2026: *"o nome ao
-   digitar não precisa aparecer lá em cima na capa"*). Ele já aparece dentro do
-   campo onde a criança digita; escrever de novo lá em cima era eco, e ainda
-   empurrava a capa para baixo. Aqui só se mantém o campo em dia com o estado
-   (importa ao retomar de onde parou). */
 function espelhaNome(t){
   var i = document.getElementById("nomeIn"); if(i && i.value !== t) i.value = t;
 }
 function vaiPara(pi){
-  calar(); fechaAtiva();
+  calar(); fechaCruz();
   document.getElementById("barraCapa").className = pi === 0 ? "aberta" : "";
   if(pi === 0) espelhaNome(ST.nome || "");
   document.getElementById("fim").style.display = "none";
@@ -939,7 +686,15 @@ function vaiPara(pi){
   document.getElementById("nav").style.display = pi === 0 ? "none" : "flex";
   for(var i = 0; i < PAGEL.length; i++) PAGEL[i].className = PAGEL[i].className.replace(" viva", "");
   ST.pag = pi; salvar();
-  var d = PAGEL[pi]; d.className += " viva";
+  /* ⚠️ GUARDA DO ESQUELETO VAZIO: enquanto o caderno ainda não tem folha
+     nenhuma, o "Começar" pede a folha 1 e `PAGEL[1]` não existe — estourava
+     `TypeError` e o portão do boot reprovava. Não é defeito do caderno em
+     construção; é o esqueleto tendo de abrir limpo ANTES de ter conteúdo, que é
+     justamente o que torna o pré-voo útil no primeiro minuto. Num caderno com
+     folhas esta guarda nunca dispara. */
+  var d = PAGEL[pi];
+  if(!d){ atualizaNav(); return; }
+  d.className += " viva";
   if(pi > 0) window.scrollTo(0, 0);
   if(d._aoAbrir) for(var z = 0; z < d._aoAbrir.length; z++) (function(fn){ setTimeout(fn, 60); })(d._aoAbrir[z]);
   atualizaNav();
@@ -961,6 +716,15 @@ function atualizaNav(){
 }
 
 /* ---------- fim: boletim, medalha e relatório ---------- */
+/* ⭐⭐ O FECHO A QUALQUER MOMENTO.
+   O Marcos fixou a sequência em no mínimo 20 folhas (o piso era 25 e ele o
+   baixou em 14/set/2026, por velocidade de produção). Este caderno tem 22, e o
+   número saiu do inventário de verbos do `POTE`, não de uma meta. Só que a
+   criança DEVAGAR leva bem mais nas mesmas 22 folhas — ela não termina. Se o boletim, o parecer e a
+   medalha só existissem DEPOIS da última folha, quem mais precisa do elogio
+   seria a única a nunca vê-lo.
+   ⚠️ E o boletim conta só o que ela TENTOU. Folha que ela não chegou a abrir
+      aparece como "ainda não" — jamais como 0 de 6. */
 function fim(){
   /* ⭐⭐ AVISA O CONTROLE DA SALA QUE ESTA CRIANÇA TERMINOU.
      Pedido do Marcos (15/set/2026): *"preciso que essas atividades sequências
@@ -986,33 +750,83 @@ function fim(){
   try{ if(window.parent && window.parent !== window)
          window.parent.postMessage({eduverse: "terminou"}, "*"); }catch(e){}
   calar();
+  var abertas = 0, naoAbertas = [], pp;
+  for(pp = 1; pp <= NOMES.length; pp++){
+    var idp = idsDaPagina(pp), algum = false, z;
+    for(z = 0; z < idp.length; z++) if(ST.tent[idp[z]]) { algum = true; break; }
+    if(algum) abertas++; else naoAbertas.push(pp);
+  }
+  var completo = naoAbertas.length === 0;
+  var tf = document.getElementById("fimTit");
+  if(tf) tf.textContent = completo ? "Caderno completo!" : "O seu boletim de hoje";
+  var bv = document.getElementById("bVoltar");
+  if(bv) bv.style.display = completo ? "none" : "";
   for(var i = 0; i < PAGEL.length; i++) PAGEL[i].className = PAGEL[i].className.replace(" viva", "");
   document.getElementById("nav").style.display = "none";
   var f = document.getElementById("fim"); f.style.display = "block";
   var tot = 0, prim = 0, pi;
   for(pi = 1; pi <= NOMES.length; pi++){
     var ids = idsDaPagina(pi);
-    tot += ids.length;
-    for(var j = 0; j < ids.length; j++){ var t = ST.tent[ids[j]]; if(t && t.erros === 0 && t.ok) prim++; }
+    for(var j = 0; j < ids.length; j++){
+      var t = ST.tent[ids[j]];
+      if(!t) continue;
+      tot++;
+      if(t.erros === 0 && t.ok) prim++;
+    }
   }
   var pc = tot ? prim / tot : 0;
   var cheias = pc >= .85 ? 3 : pc >= .6 ? 2 : 1, est = "", ke;
   for(ke = 0; ke < 3; ke++)
-    est += '<img src="img/al_estrela' + (ke < cheias ? "" : "_off") + '.png?v=6" alt="" draggable="false">';
+    est += '<img src="img/mq_selo' + (ke < cheias ? "" : "_off") + '.png?v=' + VIMG + '" alt="" draggable="false">';
   document.getElementById("estrelas").innerHTML = est;
   document.getElementById("estrelas").setAttribute("aria-label", cheias + " de 3 estrelas");
   var bar = document.getElementById("barras"); bar.innerHTML = "";
   for(pi = 1; pi <= NOMES.length; pi++){
     (function(pi){
-      var ids = idsDaPagina(pi), t = ids.length, p = 0, j;
-      for(j = 0; j < ids.length; j++){ var tt = ST.tent[ids[j]]; if(tt && tt.erros === 0 && tt.ok) p++; }
-      var b = el("div", "barra", "<span>" + NOMES[pi - 1] + "</span><div class='tr'><i></i></div><b>" + p + "/" + t + "</b>");
+      var ids = idsDaPagina(pi), p = 0, nt = 0, j;
+      for(j = 0; j < ids.length; j++){
+        var tt = ST.tent[ids[j]];
+        if(tt) nt++;
+        if(tt && tt.erros === 0 && tt.ok) p++;
+      }
+      if(nt === 0){
+        bar.appendChild(el("div", "barra naoabriu",
+          "<span>" + NOMES[pi - 1] + "</span><div class='tr'></div><b>ainda não</b>"));
+        return;
+      }
+      var b = el("div", "barra", "<span>" + NOMES[pi - 1] + "</span><div class='tr'><i></i></div><b>" + p + "/" + nt + "</b>");
       bar.appendChild(b);
-      setTimeout(function(){ b.querySelector("i").style.width = (t ? p / t * 100 : 0) + "%"; }, 400);
+      setTimeout(function(){ b.querySelector("i").style.width = (nt ? p / nt * 100 : 0) + "%"; }, 400);
     })(pi);
   }
-  document.getElementById("resumo").textContent =
-    (ST.nome || "Você") + ", você acertou de primeira " + prim + " de " + tot + " itens.";
+  /* ⭐ O PARECER DA CRIANÇA. O currículo de Blumenau diz que a avaliação orienta
+     *"o professor E O ESTUDANTE acerca de quais objetivos foram alcançados"*, e
+     que *"mostrar o que sabe ou o que não sabe é pertinente, faz parte do
+     crescimento e não da exclusão"*. Então ela vê o que já sabe — na linguagem
+     dela, sem número, sem a palavra "errou" e sem porcentagem.
+     ⚠️ A ORDEM IMPORTA: primeiro o que ela JÁ SABE; o "vale treinar" vem depois
+     e no máximo dois, senão a lista vira boletim de defeitos. */
+  var jaSabe = [], treinar = [], q;
+  for(q = 0; q < OBJETIVOS.length; q++){
+    var Oq = OBJETIVOS[q], mq = mede(Oq.f);
+    if(mq.tot === 0 || !mq.tent) continue;
+    var pcq = Math.round(100 * mq.prim / mq.tent);
+    (pcq >= 75 ? jaSabe : treinar).push(pcq >= 75 ? Oq.ok : Oq.n.toLowerCase());
+  }
+  var txt = "";
+  if(jaSabe.length) txt = "Você já " + jaSabe.slice(0, 3).join("; ") + ".";
+  else txt = "Você começou a reparar que o mesmo som pode se escrever de cinco jeitos — e isso é o principal!";
+  if(treinar.length) txt += " Vale treinar mais: " + treinar.slice(0, 2).join(" e ") + ".";
+  if(!completo)
+    txt = "você fez " + abertas + " de " + NOMES.length + " folhas hoje — e olhe o "
+        + "que já dá para ver: " + txt.charAt(0).toLowerCase() + txt.slice(1);
+  /* ⚠️ SEM NOME, SEM PREFIXO. Com o prefixo fixo saía "Você, você já…" para a
+     criança que não escreve o nome na capa — que é justamente a que mais precisa
+     que a tela fale direito com ela. */
+  var quem = (ST.nome || "").replace(/^\s+|\s+$/g, "");
+  document.getElementById("resumo").innerHTML = quem
+    ? "<b>" + esch(quem) + "</b>, " + txt.charAt(0).toLowerCase() + txt.slice(1)
+    : txt.charAt(0).toUpperCase() + txt.slice(1);
   sFesta(); confete(40); falar("fim");
 }
 (function(){
@@ -1024,57 +838,144 @@ function fim(){
   m.addEventListener("pointerleave", larga);
   m.addEventListener("pointercancel", larga);
 })();
-/* O QUE CADA FOLHA MEDE — é isto que vira a frase do "dominou".
-   ⚠️ O relatório é do PROFESSOR, não da criança: aqui pode haver porcentagem e
-   o nome técnico da habilidade. Na tela da criança, nunca (§FIM-DE-ATIVIDADE). */
-var HABILIDADE = [
-  "reconhecer a letra que falta na palavra",
-  "contar as sílabas da palavra batendo palma",
-  "descobrir a ordem que se repete numa sequência",
-  "identificar a sílaba inicial",
-  "marcar a sílaba com que a palavra começa",
-  "identificar a sílaba final",
-  "identificar a sílaba do meio",
-  "escrever a sílaba que falta",
-  "ordenar as sílabas e formar a palavra",
-  "juntar a sílaba inicial à figura certa"
+
+/* ============================================================
+   O QUE A ATIVIDADE MEDE — e como isso vira PARECER e NOTA
+
+   ⚠️ A NOTA FICA COM O PROFESSOR. A Instrução Normativa SEMED nº 1/2017, art.
+   3º, citada no currículo de Blumenau, manda avaliar *"com preponderância dos
+   aspectos qualitativos sobre os quantitativos"*. O parecer vai para a criança;
+   o número fica só aqui.
+   ⚠️ E NÃO SE CONTA TUDO IGUAL: acerto de primeira vale 1,0 e acerto com ajuda
+   vale 0,6 — o relatório mostra os dois lado a lado, para o professor ver a
+   nota E o esforço que ela custou. O critério sai impresso por exigência da
+   mesma Instrução (*"a exposição de critérios utilizados"*).
+   ============================================================ */
+var PESO_PRIMEIRA = 1.0, PESO_COM_AJUDA = 0.6;
+
+/* ⚠️ ESTA LISTA E O `curriculo.json` SÃO A MESMA COISA, ditas para dois
+   leitores: aqui em palavras que o professor lê no relatório, lá no vocabulário
+   do currículo da rede. O portão `_qa/pedagogo_curriculo.py` reprova se os nomes
+   e as folhas não baterem um a um. Os números são POSIÇÕES de folha: mudou a
+   ordem, mudam aqui e no `curriculo.json`, no mesmo commit. *//* ⚠️ ESTA LISTA E O `curriculo.json` SÃO A MESMA COISA, ditas para dois
+   leitores: aqui em palavras que o professor lê no relatório, lá no vocabulário
+   do currículo da rede. O portão `_qa/pedagogo_curriculo.py` reprova se os
+   nomes e as folhas não baterem um a um, e também se alguma folha de trabalho
+   ficar sem objetivo que a meça. Os números são POSIÇÕES de folha.
+   Ex.: {n: "Distinguir X de Y", f: [1, 2, 3],
+         ok:  "faz o que o objetivo pede, em palavras do professor",
+         nao: "o que ainda não faz — sem a palavra 'errou'"}  */
+var OBJETIVOS = [
+  /* ⚠️ ESTA LISTA E O `curriculo.json` SÃO A MESMA COISA, e o portão 0b9 reprova
+     se divergirem — nome por nome e folha por folha. É ela que o relatório do
+     professor mede e que o dossiê mostra ao lado da habilidade citada. */
+  {n: "Juntar sílabas e formar a palavra", f: [1, 2, 3, 4, 5, 9]},
+  {n: "Pôr as sílabas na ordem certa da palavra", f: [6, 7, 8]},
+  {n: "Achar, entre muitas, só as sílabas da palavra", f: [10, 11, 12, 31]},
+  {n: "Remover uma letra ou sílaba e formar outra palavra", f: [13, 14, 25, 26]},
+  {n: "Substituir uma letra ou sílaba e formar outra palavra", f: [15, 16, 17, 18, 19]},
+  {n: "Inverter as sílabas e descobrir a palavra que nasce", f: [20, 21, 22]},
+  {n: "Acrescentar uma sílaba no começo ou no fim", f: [23, 24]},
+  {n: "Ler por blocos: achar a sílaba pelo número no quadro", f: [27, 28, 29, 30]},
+  {n: "Reconhecer a sílaba inicial, medial e final", f: [32, 34]},
+  {n: "Levar a palavra montada para dentro de uma frase", f: [33, 35]}
 ];
+
+function mede(folhas){
+  var prim = 0, ajuda = 0, tot = 0, tentados = 0, k, j;
+  for(k = 0; k < folhas.length; k++){
+    var ids = idsDaPagina(folhas[k]);
+    tot += ids.length;
+    for(j = 0; j < ids.length; j++){
+      var t = ST.tent[ids[j]];
+      if(t) tentados++;
+      if(!t || !t.ok) continue;
+      if(t.erros === 0) prim++; else ajuda++;
+    }
+  }
+  return {prim: prim, ajuda: ajuda, tot: tot, tent: tentados,
+          pontos: prim * PESO_PRIMEIRA + ajuda * PESO_COM_AJUDA,
+          pc: tot ? Math.round(100 * prim / tot) : 0};
+}
+
 function abreRelatorio(){
   var r = document.getElementById("relatorio");
-  var linhas = "", fracas = [], dominou = [], pi, geralAcertos = 0, geralTotal = 0;
-  for(pi = 1; pi <= NOMES.length; pi++){
-    var ids = idsDaPagina(pi), t = ids.length, p = 0, ruins = 0, feitos = 0, j;
-    for(j = 0; j < ids.length; j++){
-      var tt = ST.tent[ids[j]];
-      if(tt && tt.ok) feitos++;
-      if(tt && tt.erros === 0 && tt.ok) p++;
-      if(tt && tt.erros >= 2) ruins++;
-    }
-    geralAcertos += p; geralTotal += t;
-    /* ⚠️ AS DUAS LISTAS SÃO COMPLEMENTARES — 75% é a única linha que decide.
-       Na primeira versão a folha entrava em "Retomar" se tivesse UM item com
-       duas tentativas, e aí a mesma folha aparecia em "Já domina" e em
-       "Retomar" ao mesmo tempo. Para o professor isso não é informação: é
-       ruído. Quem precisou de dica já está na coluna da tabela. */
-    var pcf = t ? Math.round(100 * p / t) : 0;
-    if(pcf >= 75) dominou.push(HABILIDADE[pi - 1]);
-    else fracas.push(NOMES[pi - 1] + " (" + pcf + "%)");
-    linhas += "<tr><td>" + pi + ". " + NOMES[pi - 1] + "</td><td>" + p + "/" + t +
-      "</td><td><b>" + pcf + "%</b></td><td>" + ruins + "</td></tr>";
+  var linhas = "", domina = [], retomar = [], k;
+  var pontos = 0, total = 0, primG = 0, ajudaG = 0, tentG = 0;
+  var naoAlcancou = [];
+  var folhasFeitas = 0, fz;
+  for(fz = 1; fz <= NOMES.length; fz++){
+    var idf = idsDaPagina(fz), tocou = false, y;
+    for(y = 0; y < idf.length; y++) if(ST.tent[idf[y]]) { tocou = true; break; }
+    if(tocou) folhasFeitas++;
   }
-  var pc = geralTotal ? Math.round(100 * geralAcertos / geralTotal) : 0;
-  var conceito = pc >= 85 ? "Dominou" : pc >= 60 ? "Está construindo" : "Precisa retomar";
-  var h = "<b>Relatório do professor</b> &mdash; " + esch(ST.nome || "(sem nome)") + " &middot; " +
+  var inteiro = folhasFeitas >= NOMES.length;
+
+  for(k = 0; k < OBJETIVOS.length; k++){
+    var O = OBJETIVOS[k], m = mede(O.f);
+    pontos += m.pontos; total += m.tot; primG += m.prim; ajudaG += m.ajuda;
+    tentG += m.tent;
+    /* ⚠️⚠️ O QUE DECIDE É O QUE ELA FEZ. Antes, num caderno não terminado, o
+       objetivo cujas folhas ela nem alcançou entrava em "retomar" com 0% — e o
+       parecer dizia "precisa retomar" de uma criança que tinha ido bem no que
+       deu tempo de fazer. Um julgamento errado com cara de medida, contra a
+       criança. Objetivo não tocado não entra em lista nenhuma. */
+    var pcObj = m.tent ? Math.round(100 * m.prim / m.tent) : -1;
+    if(pcObj < 0) naoAlcancou.push(O.n.toLowerCase());
+    else if(pcObj >= 75) domina.push(O.ok);
+    else retomar.push(O.n.toLowerCase() + " (" + pcObj + "%)");
+    var pcf = m.tent ? Math.round(100 * m.prim / m.tent) : 0;
+    linhas += "<tr><td>" + esch(O.n) + "</td><td>" + m.prim + "/" + m.tot +
+      "</td><td><b>" + m.pc + "%</b></td><td>" +
+      (m.tent ? "<b>" + pcf + "%</b> <small>(" + m.prim + "/" + m.tent + ")</small>"
+              : "<small>não fez</small>") + "</td><td>" + m.ajuda + "</td></tr>";
+  }
+
+  /* ⚠️ A NOTA DE UM CADERNO NÃO TERMINADO SE MEDE NO QUE FOI FEITO. Dividir
+     pelos itens que ela nunca viu dá uma nota que não fala dela — fala do
+     relógio. Com o caderno completo, os dois denominadores são o mesmo número. */
+  var baseNota = inteiro ? total : tentG;
+  var nota = baseNota ? Math.round(100 * pontos / baseNota) / 10 : 0;
+  var pc = baseNota ? Math.round(100 * primG / baseNota) : 0;
+  var conceito = !baseNota ? "Sem dados" :
+    nota >= 8.5 ? "Dominou" : nota >= 6 ? "Está construindo" : "Precisa retomar";
+  if(!inteiro) conceito += " (parcial)";
+
+  var nome = esch(ST.nome || "O aluno");
+  var parecer = nome + " ";
+  if(domina.length && !retomar.length && !naoAlcancou.length)
+    parecer += "domina os objetivos avaliados: " + domina.join("; ") + ".";
+  else if(domina.length)
+    parecer += "já " + domina.join("; ") + ". Ainda precisa retomar: " + retomar.join(", ") + ".";
+  else
+    parecer += "está começando a perceber que letras diferentes fazem o mesmo som. Nenhum " +
+      "objetivo chegou a 75% de acerto de primeira — vale retomar ORALMENTE, ditando cinco " +
+      "palavras por dia e perguntando POR QUE se escreve com aquela letra, antes de voltar " +
+      "à tela. A regra dita em voz alta fixa mais do que a palavra copiada dez vezes.";
+  if(naoAlcancou.length)
+    parecer += " Ainda não chegou a fazer (a aula acabou antes): " + naoAlcancou.join(", ") + ".";
+
+  var h = "<b>Relatório do professor</b> &mdash; " + nome + " &middot; " +
     Math.round((Date.now() - (ST.inicio || Date.now())) / 60000) + " min" +
-    "<div class='notao'><span class='nn'>" + pc + "%</span>" +
-    "<span class='nl'>" + geralAcertos + " de " + geralTotal + " acertos de primeira<br><b>" +
-    conceito + "</b></span></div>" +
-    "<table><tr><th>Folha</th><th>De primeira</th><th>%</th><th>Precisou de dica</th></tr>" +
-    linhas + "</table>";
-  h += "<p style='margin:10px 0 0'><b>Já domina:</b> " +
-    (dominou.length ? dominou.join("; ") + "." : "ainda nenhuma habilidade com 75% ou mais.") + "</p>";
-  h += "<p style='margin:6px 0 0'><b>Retomar:</b> " +
-    (fracas.length ? fracas.join(", ") + "." : "nada — foi bem nas dez folhas.") + "</p>";
+    "<div class='notao'><span class='nn'>" + nota.toFixed(1).replace(".", ",") + "</span>" +
+    "<span class='nl'><b>" + conceito + "</b><br>" + primG + " de " + baseNota +
+    " de primeira (" + pc + "%)<br>" + ajudaG + " com ajuda</span></div>" +
+    "<p class='parecer'>" + parecer + "</p>" +
+    (inteiro ? "" :
+      "<p class='avisoparcial'><b>Caderno não terminado:</b> " + folhasFeitas +
+      " de " + NOMES.length + " folhas. A coluna <b>%</b> conta o caderno inteiro; " +
+      "a coluna <b>do que fez</b> conta só o que a criança chegou a responder — " +
+      "é esta que diz como ela foi.</p>") +
+    "<table><tr><th>Objetivo</th><th>De primeira</th><th>%</th>" +
+    "<th>do que fez</th><th>Com ajuda</th></tr>" + linhas + "</table>" +
+    "<p class='comonota'>Nota de 0 a 10: acerto de primeira vale 1,0 e acerto com ajuda vale 0,6. " +
+    "A criança não vê este número — ele fica só aqui.</p>" +
+    "<p class='comonota'><b>O que este caderno NÃO mede:</b> várias das folhas de papel que " +
+    "deram origem a ele terminam em <b>&ldquo;copie no seu caderno&rdquo;</b> e " +
+    "<b>&ldquo;classifique no caderno&rdquo;</b> &mdash; e a tela não corrige o que a criança " +
+    "escreve à mão. O que dá para medir aqui é reconhecer, marcar e escrever com o teclado. " +
+    "<b>A cópia e o ditado no papel continuam sendo do professor</b>, e a folha 22 existe para " +
+    "isso: a criança sai daqui com o quadro de regras dela para copiar no caderno.</p>";
   r.innerHTML = h; r.style.display = "block"; sPasso();
 }
 function esch(t){
@@ -1092,13 +993,9 @@ function abreMenuProf(){
       cx.appendChild(b);
     };
     mk("Capa", 0);
-/* ⚠️ ERA `k <= 10` FIXO, e isso mentia sobre o tamanho do caderno.
-       O Marcos abriu o menu do professor da Horta do Vovô (21 folhas),
-       viu dez e perguntou: *"a horta só tem 10 páginas?"*. O caderno
-       inteiro funciona — MEDIDO, o jogador fecha as 21 de 21 —, mas
-       quem confere pelo menu não tem como saber disso. O dez é resto de
-       quando os cadernos desta casa tinham dez folhas; o piso hoje é 20.
-       Quem manda no menu é o NOMES, que é a lista de verdade. */
+    /* ⚠️ `NOMES.length` e não um número cravado: com "10" escrito aqui, um
+       caderno de 25 folhas mostrava só as dez primeiras no menu do professor —
+       e as quinze restantes ficavam sem como conferir. */
     for(var k = 1; k <= NOMES.length; k++) mk(k + ". " + NOMES[k - 1], k);
   }
   calar(); document.getElementById("menuProf").className = "aberto";
@@ -1155,3 +1052,1263 @@ document.getElementById("bZerar").onclick = function(){ document.getElementById(
     ST.folha = novaFolha(); monta(); vaiPara(0);
   }
 })();
+
+/*<dossie-js>*/
+/* ============================================================
+   DOSSIÊ PEDAGÓGICO — o que o PROFESSOR vê quando abre a atividade
+
+   ⭐ PEDIDO DO MARCOS (set/2026): *"preciso que quando um professor olhe e
+      analise a atividade ele veja que está ótima"*.
+
+   O buraco que isto fecha: o parecer pedagógico de cada caderno existia — mas
+   morava num arquivo `.md` DENTRO DO REPOSITÓRIO, que nenhum professor abre.
+   Quem olhava a atividade via um joguinho bonito e não tinha como saber se
+   aquilo estava alinhado ao currículo da rede. Agora o alinhamento está DENTRO
+   da atividade, a um toque — e a qualquer momento, não só no fim.
+
+   ⚠️ E não é texto solto: cada habilidade citada aqui vem do
+   `<pasta>/curriculo.json`, e o portão `_qa/pedagogo_curriculo.py` reprova se a frase
+   citada não existir, palavra por palavra, no `_curriculo/blumenau.txt`, ou se
+   os objetivos do relatório e os do currículo não baterem um a um. Citação de
+   currículo é a única coisa que o professor NÃO tem como conferir sozinho sem
+   abrir 440 páginas de PDF — por isso ela é medida.
+
+   Abre por dois caminhos: o botão no menu do professor (chave mestra 1275@,
+   vale a qualquer hora) e o botão dentro do relatório, no fim.
+
+   Este arquivo é a FONTE: `python3 _padrao/dossie_professor.py <pasta>` injeta o CSS, o
+   trecho de tela e este código no caderno. Não editar a cópia injetada.
+   ============================================================ */
+function dossieCita(s){
+  var m = String(s || "").match(/[“"]([^”"]+)[”"]/);
+  return m ? m[1] : String(s || "");
+}
+function dossieHTML(){
+  var C = (typeof CURRICULO === "object" && CURRICULO) ? CURRICULO : null;
+  if(!C) return "<p>Este caderno ainda não declarou o currículo.</p>";
+  var h = "", k, o;
+  h += "<p class='dfonte'><b>" + esch(C.componente) + " &middot; " + C.ano +
+       "º ano.</b> " + esch(C.rede) + ". As habilidades abaixo estão " +
+       "<b>copiadas do documento oficial, palavra por palavra</b> &mdash; nenhuma " +
+       "foi reescrita nem resumida.</p>";
+  h += "<table><tr><th>O que a atividade mede</th><th>Folhas</th>" +
+       "<th>Habilidade do currículo da rede</th></tr>";
+  for(k = 0; k < C.objetivos.length; k++){
+    o = C.objetivos[k];
+    h += "<tr><td>" + esch(o.objetivo) + "</td><td>" + o.folhas.join(", ") +
+         "</td><td>&ldquo;" + esch(dossieCita(o.habilidade)) + "&rdquo;" +
+         "<span class='dobj'>" + esch(o.pratica) + " &middot; " +
+         esch(o.objeto) + "</span></td></tr>";
+  }
+  h += "</table>";
+
+  h += "<p class='dsub'><b>A escada didática</b> &mdash; uma folha por degrau, e " +
+       "nenhuma repete o gesto da anterior:</p><ol class='descada'>";
+  for(k = 0; k < NOMES.length; k++) h += "<li>" + esch(NOMES[k]) + "</li>";
+  h += "</ol>";
+
+  h += "<p class='dsub'><b>Como a criança é avaliada</b></p>" +
+       "<p class='dtxt'>O relatório do professor (no fim, segurando a medalha por " +
+       "2 segundos) traz, por objetivo: quantos itens ela acertou <b>de primeira</b>, " +
+       "quantos precisou de ajuda e a porcentagem. A partir de 75% de acerto de " +
+       "primeira o objetivo conta como dominado. Sai também um parecer em palavras " +
+       "&mdash; do jeito que se escreve no bimestral &mdash; e uma nota de 0 a 10 " +
+       "que <b>a criança não vê</b>. Dentro da atividade não há nota, nem ranking, " +
+       "nem a palavra &ldquo;errou&rdquo;: o erro responde na hora e diz o que " +
+       "olhar, e a ajuda cresce a cada tentativa (dica &rarr; apoio concreto &rarr; " +
+       "revelar).</p>";
+
+  if(C.evidencia && C.evidencia.length){
+    h += "<p class='dsub'><b>O que foi medido antes de publicar</b></p><ul class='dev'>";
+    for(k = 0; k < C.evidencia.length; k++) h += "<li>" + esch(C.evidencia[k]) + "</li>";
+    h += "</ul>";
+  }
+  return h;
+}
+function abreDossie(){
+  var cx = document.getElementById("dsCorpo");
+  if(!cx) return;
+  if(typeof calar === "function") calar();
+  cx.innerHTML = dossieHTML();
+  document.getElementById("dossie").className = "aberto";
+  cx.scrollTop = 0;
+}
+function fechaDossie(){ document.getElementById("dossie").className = ""; }
+(function(){
+  var b = document.getElementById("bDossie"), f = document.getElementById("dsFechar"),
+      cx = document.getElementById("dossie");
+  if(b) b.onclick = function(){ fechaMenuProf(); abreDossie(); };
+  if(f) f.onclick = fechaDossie;
+  if(cx) cx.onclick = function(ev){ if(ev.target === this) fechaDossie(); };
+
+  /* o segundo caminho: o botão nasce DENTRO do relatório, quando ele abre.
+     Fica ali e não na tela final porque o relatório é a parte que a criança
+     não vê — e o dossiê é conversa de adulto. */
+  if(typeof abreRelatorio === "function"){
+    var antes = abreRelatorio;
+    abreRelatorio = function(){
+      antes.apply(this, arguments);
+      var r = document.getElementById("relatorio");
+      if(r && !r.querySelector(".bdossie")){
+        var bt = document.createElement("button");
+        bt.className = "bt bdossie";
+        bt.textContent = "Dossiê pedagógico (currículo da rede)";
+        bt.onclick = abreDossie;
+        r.appendChild(bt);
+      }
+    };
+  }
+}());
+/*</dossie-js>*/
+
+/* ⭐ o botão "Terminar" e o "Voltar para o caderno" — ver o comentário do fim() */
+(function(){
+  var bt = document.getElementById("bTerminar");
+  if(bt) bt.onclick = function(){
+    var falta = 0, pz;
+    for(pz = 1; pz <= NOMES.length; pz++) falta += pendentes(pz);
+    if(falta && !confirm("Quer fechar o caderno e ver o seu boletim?\n\nVocê pode voltar depois e continuar de onde parou."))
+      return;
+    fim();
+  };
+  var bv = document.getElementById("bVoltar");
+  if(bv) bv.onclick = function(){
+    document.getElementById("fim").style.display = "none";
+    vaiPara(ST.pag || 1);
+  };
+})();
+
+/* ============================================================
+   AS PEÇAS NOVAS DESTE CADERNO
+   ⚠️ Cada uma nasceu de um COMANDO IMPRESSO numa folha de papel — a marca `T##`
+      diz qual. O crivo das 40 está em `_sequencias/POTE-TROCA2.md`.
+   ============================================================ */
+
+/* ⚠️⚠️ TODA SÍLABA QUE A CRIANÇA TOCA FALA POR AQUI, E POR NENHUM OUTRO CAMINHO.
+   O sintetizador não lê SOM, lê PALAVRA: dê "SA" a ele e ele soletra "esse-á".
+   O pedaço é RECORTADO de dentro da gravação da palavra inteira
+   (`silabas.json` + `_padrao/silabas_voz.py`, no `entregar.yml`). */
+function falaDaSilaba(sb){
+  return function(){
+    var s = String(sb).toUpperCase();
+    /* ⚠️ PEDAÇO DE DUAS SÍLABAS NÃO PRECISA DE RECORTE: a voz lê "LADO", "MATE"
+       e "COLA" como leria qualquer palavra, porque têm duas vogais e desenho de
+       palavra. Quem soletra é o pedaço de UMA sílaba — e esse está no SILMAP,
+       recortado. Sem esta linha, o botão dos pedaços compridos ficava MUDO. */
+    if(SILMAP[s]) falarSilaba(null, 0, s);
+    else falar("pal_" + chaveQuadro(s));
+  };
+}
+function figOu(f, cls){ return f ? img("mq_" + f + ".png", cls || "fig", "") : ""; }
+
+/* PEÇA — MARQUE VÁRIAS E SÓ DEPOIS CONFIRA (T24/T29)
+   ⭐ Marcar quantas quiser e confirmar depois é o que deixa a criança se
+      corrigir sozinha. Numa folha de sete anos isso vale mais que acertar de
+      primeira (dificuldade desejável, Bjork). */
+function marqueConfira(box, id, pi, pecas, fCerto, fDica){
+  var feito = !!ST.resp[id], marcadas = {}, bts = [];
+  registra(id, pi, pecas.filter(function(p){ return p.ok; })
+                        .map(function(p){ return p.k; }).join(" "));
+  var cx = el("div", "sils");
+  pecas.forEach(function(P){
+    var b = el("button", "sil" + (feito && P.ok ? " ok" : ""), P.t);
+    b.setAttribute("aria-label", P.t);
+    b.setAttribute("data-qa", (P.ok ? "op-" : "no-") + id + "-" + P.k);
+    b.onclick = function(){
+      if(ST.resp[id]) return;
+      sPasso();
+      falaDaSilaba(P.t)();
+      if(marcadas[P.k]){ delete marcadas[P.k]; b.className = "sil"; }
+      else { marcadas[P.k] = 1; b.className = "sil marcada"; }
+    };
+    cx.appendChild(b); bts.push({b: b, P: P});
+  });
+  box.appendChild(cx);
+  var cf = el("button", "bt verde pronto", "Conferir");
+  cf.setAttribute("data-qa", "conferir-" + id);
+  cf.onclick = function(){
+    if(ST.resp[id]) return;
+    var certo = true;
+    bts.forEach(function(x){ if(!!marcadas[x.P.k] !== !!x.P.ok) certo = false; });
+    if(certo){
+      bts.forEach(function(x){ if(x.P.ok) x.b.className = "sil ok"; });
+      acertou(id, fCerto); box.className = "item feito"; cf.style.display = "none";
+    } else {
+      sErro(); cx.className = "sils erro";
+      setTimeout(function(){ cx.className = "sils"; }, 480);
+      errou(id, fDica);
+    }
+  };
+  if(feito) cf.style.display = "none";
+  box.appendChild(cf);
+}
+
+/* ============================================================
+   PEÇA — A FILEIRA DE LETRAS EMBARALHADAS (ideia do Marcos, 15/set/2026:
+   *"ou somente colocar as letras das palavras selecionadas, embaralhadas... daí
+   ocupa menos espaço e pode ser tudo na horizontal"*). Ela substituiu a barra de
+   41 teclas, que comia meia tela.
+   ⚠️⚠️ ONDE ELA NÃO PODE ENTRAR: em folha de ORTOGRAFIA as letras SÃO a
+      pergunta, e pôr o Ç na fileira é DAR a resposta. Aqui ela entra na folha 33
+      porque o desafio é ESCREVER a palavra que a frase pede, não escolher entre
+      grafias parecidas.
+   ⚠️ E O TECLADO DE VERDADE CONTINUA VALENDO em cima dela — as duas portas são
+      regra da casa, e no PC da escola a criança vai digitar.
+   ⚠️ COPIADA DO `_sil2`, onde ela já passou pelo jogador e pelo Marcos. A minha
+      primeira versão aqui era reescrita e não fechava nenhum item: o `_digita`
+      não voltava, então o `ATIVO_LETRAS` nunca apontava para a fileira.
+   ============================================================ */
+function fileiraLetras(box, id, pi, palavra, cels, fCerto, fDica){
+  var val = "", feito = !!ST.resp[id];
+  function pinta(){
+    cels.forEach(function(c, i){
+      c.textContent = feito ? palavra.charAt(i) : (val.charAt(i) || "");
+      c.className = "ccel viva" + (feito ? " ok" : (val.charAt(i) ? " cheia" : ""));
+    });
+  }
+  function confere(){
+    if(mesmaPalavra(val, palavra)){
+      feito = true; pinta();
+      cx.className = "letrasfila pronta";
+      acertou(id, fCerto); box.className = "item feito";
+    } else {
+      val = ""; pinta();
+      cx.className = "letrasfila erro";
+      setTimeout(function(){ cx.className = "letrasfila"; }, 480);
+      bts.forEach(function(x){ x.b.className = "letrabt"; x.usada = false; });
+      errou(id, fDica);
+    }
+  }
+  var cx = el("div", "letrasfila"), bts = [];
+  /* ⚠️ AS LETRAS REPETIDAS APARECEM REPETIDAS (RATO tem um A; VOVÓ tem dois O):
+     dar uma letra só para duas posições deixaria a palavra impossível de
+     montar — foi o defeito que o jogador pegou no banco de sílabas, e a lição
+     serve igual aqui. */
+  baralha(palavra.split("")).forEach(function(L, n){
+    var b = el("button", "letrabt", L);
+    b.setAttribute("aria-label", "Letra " + L);
+    b.setAttribute("data-qa", "ltr-" + id + "-" + n);
+    var reg = {b: b, L: L, usada: false};
+    b.onclick = function(){
+      if(feito || reg.usada) return;
+      sTecla();
+      reg.usada = true; b.className = "letrabt usada";
+      val += L; pinta();
+      if(val.length >= palavra.length) setTimeout(confere, 320);
+    };
+    cx.appendChild(b); bts.push(reg);
+  });
+  var ap = el("button", "letrabt apagar", "apagar");
+  ap.setAttribute("aria-label", "Apagar a última letra");
+  ap.onclick = function(){
+    if(feito || !val.length) return;
+    sTecla();
+    var ult = val.charAt(val.length - 1), i;
+    val = val.slice(0, -1);
+    for(i = bts.length - 1; i >= 0; i--)
+      if(bts[i].usada && bts[i].L === ult){ bts[i].usada = false; bts[i].b.className = "letrabt"; break; }
+    pinta();
+  };
+  cx.appendChild(ap);
+  box.appendChild(cx);
+  pinta();
+  /* a outra porta: o teclado de verdade escreve na mesma fileira */
+  box._digita = function(ch){
+    if(feito) return;
+    if(ch === "ap"){ ap.onclick(); return; }
+    if(ch === "ok"){ if(val.length) confere(); return; }
+    var i;
+    for(i = 0; i < bts.length; i++)
+      if(!bts[i].usada && mesmaPalavra(bts[i].L, ch)){ bts[i].b.onclick(); return; }
+  };
+  return box._digita;
+}
+
+/* ⚠️ A FILEIRA DE LETRAS TAMBÉM OUVE O TECLADO DE VERDADE — as duas portas são
+   regra da casa, e no PC da escola a criança vai digitar. `ATIVO_LETRAS` é a
+   fileira que está esperando letra; tocar na grade do item a aponta para ele. */
+var ATIVO_LETRAS = null;
+document.addEventListener("keydown", function(ev){
+  if(!ATIVO_LETRAS || CRUZ) return;
+  if(document.activeElement && document.activeElement.id === "nomeIn") return;
+  var t = (ev.key || "").toUpperCase();
+  if(t.length === 1){ ev.preventDefault(); ATIVO_LETRAS(t); return; }
+  if(ev.key === "Backspace"){ ev.preventDefault(); ATIVO_LETRAS("ap"); return; }
+  if(ev.key === "Enter"){ ev.preventDefault(); ATIVO_LETRAS("ok"); return; }
+});
+
+/* PEÇA — TIRE UMA LETRA (T02: "Elimine uma letra na primeira sílaba")
+   A palavra aparece letra a letra; a criança toca na que sobra. */
+function tiraLetra(box, id, pi, X, fCerto, fDica){
+  registra(id, pi, "x" + X.tira);
+  var cx = el("div", "cortar");
+  X.de.split("").forEach(function(L, n){
+    var b = el("button", "clt lt", L);
+    b.setAttribute("aria-label", "Letra " + L);
+    b.setAttribute("data-qa", (n === X.tira ? "op-" : "no-") + id + "-x" + n);
+    b.onclick = function(){
+      if(ST.resp[id]) return;
+      sPasso();
+      if(n !== X.tira){
+        b.className = "clt lt nao";
+        setTimeout(function(){ b.className = "clt lt"; }, 420);
+        errou(id, fDica); return;
+      }
+      b.className = "clt lt fora";
+      var saida = el("div", "palgrande nova", X.r);
+      box.appendChild(saida);
+      falar("pal_" + chaveQuadro(X.r));
+      acertou(id, fCerto); box.className = "item feito";
+    };
+    cx.appendChild(b);
+  });
+  box.appendChild(cx);
+}
+
+/* PEÇA — TROQUE OS PEDAÇOS DE LUGAR (T10: "MUDA-SÍLABAS")
+   ⭐⭐⭐ O coração do degrau, e o que dá nome ao caderno.
+   ⚠️ E AQUI O GESTO É ARRASTAR, não tocar: a criança PUXA o pedaço de trás para
+      a frente. É o que a máquina faz, e é o que a mão dela sente. O toque
+      simples também funciona (regra das duas portas). */
+function inverte(box, id, pi, X, fCerto, fDica){
+  registra(id, pi, "inv");
+  var cx = el("div", "vagas2");
+  var vagas = [el("div", "vg"), el("div", "vg")], ordem = X.s.slice();
+  vagas[0].setAttribute("data-alvo", "1");
+  vagas[1].setAttribute("data-alvo", "1");
+  vagas[0].setAttribute("data-qa", "alvo-" + id + "-v0");
+  vagas[1].setAttribute("data-qa", "alvo-" + id + "-v1");
+  function desenha(){
+    vagas.forEach(function(v, n){
+      v.innerHTML = "";
+      var b = el("button", "sil", ordem[n]);
+      b.setAttribute("aria-label", ordem[n]);
+      /* ⚠️ UM clique já resolve (as duas peças trocam), então o alvo do jogador
+         é sempre a segunda vaga. */
+      b.setAttribute("data-qa", n === 1 ? "op-" + id + "-inv" : "no-" + id + "-p0");
+      b.onclick = function(){
+        if(b._arrastou){ b._arrastou = false; return; }
+        troca();
+      };
+      puxavel(b, vagas, function(){ troca(); });
+      v.appendChild(b);
+    });
+  }
+  function troca(){
+    if(ST.resp[id]) return;
+    sPasso();
+    ordem = [ordem[1], ordem[0]];
+    desenha();
+    var agora = ordem.join("");
+    if(agora === X.r.toUpperCase()){
+      var saida = el("div", "palgrande nova", X.r);
+      box.appendChild(saida);
+      falar("pal_" + chaveQuadro(X.r));
+      acertou(id, fCerto); box.className = "item feito";
+    }
+  }
+  desenha();
+  vagas.forEach(function(v){ cx.appendChild(v); });
+  box.appendChild(cx);
+}
+
+/* PEÇA — O CÓDIGO DAS SÍLABAS (T19/T25/T26/T22)
+   ⭐⭐ A sílaba vira NÚMERO e a criança decifra. O quadro numerado fica no alto
+      da folha e vale para todos os itens, como na folha de papel. */
+function quadroCodigo(d, Q){
+  var g = el("div", "quadro");
+  Q.quadro.forEach(function(sb, n){
+    var c = el("div", "qcel");
+    c.innerHTML = '<span class="qn">' + (n + 1) + '</span><span class="qs">' + sb + "</span>";
+    g.appendChild(c);
+  });
+  d.appendChild(g);
+}
+function decodifica(box, id, pi, Q, P, fCerto, fDica){
+  /* ⚠️⚠️ A RESPOSTA É A SEQUÊNCIA DE CÉLULAS, e uma célula pode entrar DUAS
+     vezes (BANANA = 6-7-7). Por isso o nome de cada peça é a CÉLULA (`c5`), não
+     a posição (`s0`): com o nome pela posição eu precisaria trocar o `data-qa`
+     no meio do caminho, e o jogador da banca lê o nome UMA vez, no começo. */
+  registra(id, pi, P.n.map(function(c){ return "c" + (c - 1); }).join(" "));
+  var lin = el("div", "enunlin");
+  lin.appendChild(el("div", "numeros", P.n.join(" &middot; ")));
+  box.appendChild(lin);
+  var vaga = el("div", "vagas"), cxs = [], t, feitas = 0;
+  for(t = 0; t < P.n.length; t++){
+    var c = el("span", "cxs2" + (ST.resp[id] ? " cheia" : ""),
+               ST.resp[id] ? Q.quadro[P.n[t] - 1] : "");
+    cxs.push(c); vaga.appendChild(c);
+  }
+  box.appendChild(vaga);
+  var cx = el("div", "sils");
+  /* o banco é o QUADRO INTEIRO, como na folha de papel: a criança procura o
+     número, não a sílaba. */
+  Q.quadro.forEach(function(sb, n){
+    var serve = P.n.indexOf(n + 1) > -1;
+    var b = el("button", "sil num", '<span class="qn">' + (n + 1) + "</span>" + sb);
+    b.setAttribute("aria-label", "Número " + (n + 1) + ", " + sb);
+    b.setAttribute("data-qa", (serve ? "op-" + id + "-c" + n : "no-" + id + "-q" + n));
+    b.onclick = function(){
+      if(ST.resp[id]) return;
+      sPasso();
+      falaDaSilaba(sb)();
+      if(P.n[feitas] !== n + 1){
+        b.className = "sil num nao";
+        setTimeout(function(){ b.className = "sil num"; }, 420);
+        errou(id, fDica); return;
+      }
+      cxs[feitas].innerHTML = sb; cxs[feitas].className = "cxs2 cheia";
+      feitas++;
+      if(feitas === P.n.length){ acertou(id, fCerto); box.className = "item feito"; }
+    };
+    cx.appendChild(b);
+  });
+  box.appendChild(cx);
+}
+
+/* PEÇA — O FIM DE DUAS, UMA NOVA (T30) ⭐⭐⭐ a melhor folha das 40.
+   A criança toca na sílaba FINAL de cada palavra; quando as duas estão
+   marcadas, a palavra nova aparece. */
+function fimDeDuas(box, id, pi, X, fCerto, fDica){
+  registra(id, pi, "za zb");
+  var pegou = {};
+  var cx = el("div", "duplas");
+  function bloco(pal, fig, sils, tag){
+    var w = el("div", "dupla");
+    w.innerHTML = figOu(fig, "figp");
+    var sb = el("div", "sils min");
+    sils.forEach(function(s, n){
+      var b = el("button", "sil", s);
+      b.setAttribute("aria-label", s);
+      var ultima = (n === sils.length - 1);
+      b.setAttribute("data-qa", (ultima ? "op-" + id + "-" + tag : "no-" + id + "-" + tag + n));
+      b.onclick = function(){
+        if(ST.resp[id]) return;
+        sPasso(); falaDaSilaba(s)();
+        if(!ultima){
+          b.className = "sil nao";
+          setTimeout(function(){ b.className = "sil"; }, 420);
+          errou(id, fDica); return;
+        }
+        b.className = "sil ok"; pegou[tag] = s;
+        if(pegou.za && pegou.zb){
+          var saida = el("div", "resultado");
+          saida.innerHTML = figOu(X.fr, "figp") + '<div class="palgrande nova">' + X.r + "</div>";
+          box.appendChild(saida);
+          falar("pal_" + chaveQuadro(X.r));
+          acertou(id, fCerto); box.className = "item feito";
+        }
+      };
+      sb.appendChild(b);
+    });
+    w.appendChild(sb);
+    w.appendChild(el("div", "palpeq", pal));
+    return w;
+  }
+  cx.appendChild(bloco(X.a, X.fa, X.sa, "za"));
+  cx.appendChild(el("div", "mais", "+"));
+  cx.appendChild(bloco(X.b, X.fb, X.sb, "zb"));
+  box.appendChild(cx);
+}
+
+/* ============================================================
+   AS 35 FOLHAS — e a ordem É a escada.
+   A máquina MONTA (1-9) → a máquina ACHA (10-12) → a máquina TIRA (13-14) →
+   a máquina TROCA (15-19) → a máquina INVERTE (20-22) → a máquina ACRESCENTA
+   (23-24) → a máquina RECORTA (25-26) → o código (27-30) → a palavra no mundo
+   (31-35).
+   ⚠️ E A REPETIÇÃO VEM EM BLOCO, colada, subindo um degrau — nunca espalhada
+      (regra do Marcos: *"as crianças me dizem 'isso eu já fiz'"*).
+   ============================================================ */
+
+/* ===== BLOCO A — A MÁQUINA MONTA (1 a 9) ===== */
+
+/* 1 e 2 — QUAL FINAL FORMA A PALAVRA (T07, VERBATIM: "FORMANDO AS PALAVRAS")
+   ⚠️ O DISTRATOR É PALAVRA DE VERDADE (BOCA para BOLA) — e tem de ser: quem
+      desempata é a FIGURA, exatamente como na folha de papel. A 2 é o par e
+      sobe: três finais em vez de duas. */
+function montaEscolha(d, pi) {
+  ST.folha["p" + pi].forEach(function(k, i){
+    var E = ESC[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.innerHTML = figOu(E.f);
+    lin.appendChild(el("div", "palgrande", '<span class="pd forte">' + E.i + '</span><i class="lacuna"></i>'));
+    lin.appendChild(botaoSom("Ouvir a palavra", function(){ falar("esc_" + k); }));
+    box.appendChild(lin);
+    opcoes(box, pi, id, baralha(E.ops.map(function(sb){
+      return {v: sb.toLowerCase(), rot: sb, aria: sb, fala: falaDaSilaba(sb)};
+    })), E.r.toLowerCase(), "pal", "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+    fechaItem(d, box, id);
+  });
+}
+function f1(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Olhe a figura e ouça. Qual dos dois pedaços termina a " +
+            "palavra?", "p" + pi + "enun");
+  montaEscolha(d, pi);
+}
+function f2(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Agora são <b>três</b> pedaços para escolher. Diga a palavra " +
+            "baixinho antes.", "p" + pi + "enun");
+  montaEscolha(d, pi);
+}
+
+/* 3 e 4 — UM PEDAÇO, TRÊS PALAVRAS (T06, VERBATIM: "JUNTE AS SÍLABAS E FORME
+   PALAVRAS")
+   ⭐ A ideia grande: a sílaba não pertence a uma palavra — é peça solta que
+      serve em muitos lugares. A 4 é o par e sobe: palavras compridas. */
+function montaJuntar(d, pi){
+  ST.folha["p" + pi].forEach(function(k, i){
+    var J = JUN[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var alvos = [], n;
+    for(n = 0; n < J.f.length; n++) alvos.push("j" + n);
+    registra(id, pi, alvos.join(" "));
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "palgrande", '<span class="pd forte">' + J.i + "</span>"));
+    lin.appendChild(botaoSom("Ouvir o pedaço", falaDaSilaba(J.i)));
+    box.appendChild(lin);
+    var cx = el("div", "juntas"), feitos = 0;
+    J.f.forEach(function(fim, n){
+      var linha = el("div", "juntalin");
+      var b = el("button", "sil" + (ST.resp[id] ? " usada" : ""), J.i + " + " + fim);
+      b.setAttribute("aria-label", J.i + " mais " + fim);
+      b.setAttribute("data-qa", "op-" + id + "-j" + n);
+      var saida = el("span", "saida", ST.resp[id] ? J.r[n] : "");
+      b.onclick = function(){
+        if(ST.resp[id] || b.className.indexOf("usada") > -1) return;
+        sPasso(); b.className = "sil usada"; saida.innerHTML = J.r[n];
+        falar("pal_" + chaveQuadro(J.r[n]));
+        feitos++;
+        if(feitos === J.f.length){ acertou(id, "certo" + pi + "_" + k); box.className = "item feito"; }
+      };
+      linha.appendChild(b);
+      linha.appendChild(el("span", "seta", "&rarr;"));
+      linha.appendChild(saida);
+      cx.appendChild(linha);
+    });
+    box.appendChild(cx);
+    fechaItem(d, box, id);
+  });
+}
+function f3(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Um pedaço só serve para <b>três</b> palavras. Junte-o a " +
+            "cada final e veja o que aparece.", "p" + pi + "enun");
+  montaJuntar(d, pi);
+}
+function f4(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "As palavras agora são compridas — mas o pedaço da frente " +
+            "continua sendo o mesmo.", "p" + pi + "enun");
+  montaJuntar(d, pi);
+}
+
+/* 5 — A COR MOSTRA O PAR (T08: cada sílaba tem uma bolinha colorida)
+   ⭐ E O ANDAIME SOME SOZINHO: os três primeiros itens trazem a bolinha; os três
+      últimos, não. É o que a folha de papel faz, e é dificuldade desejável. */
+function f5(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Nos primeiros, a <b>bolinha da mesma cor</b> mostra o par. " +
+            "Depois a bolinha some — e você já vai saber.", "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var C = COR_[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.innerHTML = figOu(C.f);
+    lin.appendChild(el("div", "palgrande",
+      '<span class="pd forte">' + C.i + (C.c ? '<i class="bol ' + C.c + '"></i>' : "") +
+      '</span><i class="lacuna"></i>'));
+    lin.appendChild(botaoSom("Ouvir a palavra", function(){ falar("cor_" + k); }));
+    box.appendChild(lin);
+    opcoes(box, pi, id, baralha(C.ops.map(function(sb){
+      return {v: sb.toLowerCase(), rot: sb + (C.c && sb === C.r ? '<i class="bol ' + C.c + '"></i>' : ""),
+              aria: sb, fala: falaDaSilaba(sb)};
+    })), C.r.toLowerCase(), "pal", "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* 6 e 7 — PONHA AS SÍLABAS NA ORDEM (T12, VERBATIM: "ENUMERE NA SEQUÊNCIA
+   CORRETA, AS SÍLABAS QUE FORMAM O NOME DE CADA DESENHO" · T40, VERBATIM:
+   "Desembaralhe as sílabas, forme as palavras e faça a correspondência")
+   ⚠️ A posição CERTA de cada peça é a ordem dela DENTRO DA PALAVRA, não a ordem
+      em que está desenhada. */
+function montaOrdenar(d, pi){
+  ST.folha["p" + pi].forEach(function(k, i){
+    var O = ORD[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var certo = [], n, ordem = [], resto = O.r.toUpperCase(), achou;
+    /* ⚠️ a ordem verdadeira sai da PALAVRA: encaixa da esquerda para a direita. */
+    while(resto.length){
+      achou = -1;
+      for(n = 0; n < O.s.length; n++){
+        if(ordem.indexOf(n) < 0 && resto.indexOf(O.s[n]) === 0){ achou = n; break; }
+      }
+      if(achou < 0) break;
+      ordem.push(achou); resto = resto.slice(O.s[achou].length);
+    }
+    for(n = 0; n < O.s.length; n++) certo.push("s" + n);
+    registra(id, pi, certo.join(" "));
+    var lin = el("div", "enunlin");
+    lin.innerHTML = figOu(O.f);
+    lin.appendChild(botaoSom("Ouvir a palavra", function(){ falar("ord_" + k); }));
+    box.appendChild(lin);
+    var vaga = el("div", "vagas"), cxs = [], t, feitas = 0;
+    for(t = 0; t < O.s.length; t++){
+      var c = el("span", "cxs2" + (ST.resp[id] ? " cheia" : ""),
+                 ST.resp[id] ? O.s[ordem[t]] : "");
+      cxs.push(c); vaga.appendChild(c);
+    }
+    box.appendChild(vaga);
+    var cx = el("div", "sils");
+    baralha(O.s.map(function(sb, n){ return {sb: sb, n: ordem.indexOf(n)}; })).forEach(function(P){
+      var b = el("button", "sil", P.sb);
+      b.setAttribute("aria-label", P.sb);
+      b.setAttribute("data-qa", "op-" + id + "-s" + P.n);
+      b.onclick = function(){
+        if(ST.resp[id]) return;
+        sPasso(); falaDaSilaba(P.sb)();
+        if(P.n !== feitas){
+          b.className = "sil nao";
+          setTimeout(function(){ b.className = "sil"; }, 420);
+          errou(id, "dica" + pi + "_" + k); return;
+        }
+        b.className = "sil usada";
+        cxs[feitas].innerHTML = P.sb; cxs[feitas].className = "cxs2 cheia";
+        feitas++;
+        if(feitas === O.s.length){ acertou(id, "certo" + pi + "_" + k); box.className = "item feito"; }
+      };
+      cx.appendChild(b);
+    });
+    box.appendChild(cx);
+    fechaItem(d, box, id);
+  });
+}
+function f6(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "As sílabas se embaralharam. Toque nelas <b>na ordem</b> " +
+            "para a palavra voltar.", "p" + pi + "enun");
+  montaOrdenar(d, pi);
+}
+function f7(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Agora são três pedaços. A figura confere para você.",
+            "p" + pi + "enun");
+  montaOrdenar(d, pi);
+}
+
+/* 8 — DUAS ORDENS, UMA SÓ É PALAVRA (T15: o par LI-TO-PA × LI-PA-TO)
+   ⭐ A descoberta: as MESMAS sílabas em outra ordem não são nada. */
+function f8(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Os mesmos pedaços, em duas ordens. Só <b>uma</b> é palavra " +
+            "de verdade — qual?", "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var D = DUAS[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.innerHTML = figOu(D.f);
+    lin.appendChild(botaoSom("Ouvir a palavra", function(){ falar("dua_" + k); }));
+    box.appendChild(lin);
+    opcoes(box, pi, id, baralha(D.ops.map(function(w){
+      return {v: w.toLowerCase(), rot: w, aria: w, fala: "pal_" + chaveQuadro(w)};
+    })), D.r.toLowerCase(), "pal", "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* 9 — AS GOTAS DE CHUVA (T31, VERBATIM: "JUNTE AS SÍLABAS DAS GOTINHAS E FORME
+   PALAVRAS")
+   ⚠️ O BANCO É O MESMO PARA TODOS OS ITENS, como na folha de papel: cada sílaba
+      certa aparece UMA vez e as outras são distratoras de verdade. */
+function f9(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "As sílabas caíram como gotas de chuva. Pegue as que formam " +
+            "cada palavra, <b>na ordem</b>.", "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var B = BANCO.pal[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var certo = [], n;
+    for(n = 0; n < B.s.length; n++) certo.push("s" + n);
+    registra(id, pi, certo.join(" "));
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "ajuda", "Monte uma palavra de <b>" + B.s.length +
+                                       " sílabas</b>. Ouça qual é."));
+    lin.appendChild(botaoSom("Ouvir a palavra", function(){ falar("ban_" + k); }));
+    box.appendChild(lin);
+    var vaga = el("div", "vagas"), cxs = [], t, feitas = 0;
+    for(t = 0; t < B.s.length; t++){
+      var c = el("span", "cxs2" + (ST.resp[id] ? " cheia" : ""),
+                 ST.resp[id] ? B.s[t] : "");
+      cxs.push(c); vaga.appendChild(c);
+    }
+    box.appendChild(vaga);
+    var cx = el("div", "gotas"), usados = {};
+    baralha(BANCO.sil.slice(0)).forEach(function(sb){
+      var pos = -1, q;
+      for(q = 0; q < B.s.length; q++) if(B.s[q] === sb && !usados[q]) { pos = q; break; }
+      var b = el("button", "gota", sb);
+      b.setAttribute("aria-label", sb);
+      b.setAttribute("data-qa", (pos >= 0 ? "op-" + id + "-s" + pos
+                                          : "no-" + id + "-g" + chaveQuadro(sb)));
+      if(pos >= 0) usados[pos] = 1;
+      b.onclick = function(){
+        if(ST.resp[id]) return;
+        sPasso(); falaDaSilaba(sb)();
+        if(pos !== feitas){
+          b.className = "gota nao";
+          setTimeout(function(){ b.className = "gota"; }, 420);
+          errou(id, "dica" + pi + "_" + k); return;
+        }
+        b.className = "gota usada";
+        cxs[feitas].innerHTML = sb; cxs[feitas].className = "cxs2 cheia";
+        feitas++;
+        if(feitas === B.s.length){ acertou(id, "certo" + pi + "_" + k); box.className = "item feito"; }
+      };
+      cx.appendChild(b);
+    });
+    box.appendChild(cx);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ===== BLOCO B — A MÁQUINA ACHA (10 a 12) ===== */
+
+/* 10, 11 e 12 — ACHE OS PEDAÇOS CERTOS (T24, VERBATIM: "CIRCULE AS SÍLABAS DO
+   NOME DAS FIGURAS E ESCREVA" · T29, VERBATIM: "Pinte os quadradinhos das
+   sílabas que precisamos para formar as palavras de cada desenho")
+   ⚠️ O par sobe de verdade: 10 tem UMA armadilha por item, 11 tem SEIS, e 12
+      tem seis PARECIDAS (BAR para BOR, CRE para CLE) — que é o degrau difícil. */
+function montaMarcar(d, pi){
+  ST.folha["p" + pi].forEach(function(k, i){
+    var M = MAR[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.innerHTML = figOu(M.f);
+    lin.appendChild(el("div", "palgrande", M.p));
+    lin.appendChild(botaoSom("Ouvir a palavra", function(){ falar("mar_" + k); }));
+    box.appendChild(lin);
+    var pecas = [];
+    M.g.forEach(function(sb, n){ pecas.push({k: "g" + n, t: sb, ok: 1}); });
+    M.d.forEach(function(sb, n){ pecas.push({k: "d" + n, t: sb, ok: 0}); });
+    marqueConfira(box, id, pi, baralha(pecas),
+                  "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+    fechaItem(d, box, id);
+  });
+}
+function f10(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "São três pedaços e só <b>dois</b> servem. Marque os certos " +
+            "e toque em Conferir.", "p" + pi + "enun");
+  montaMarcar(d, pi);
+}
+function f11(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Agora há muitos pedaços sobrando. Diga a palavra devagar e " +
+            "marque só os que você ouvir.", "p" + pi + "enun");
+  montaMarcar(d, pi);
+}
+function f12(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Cuidado: agora os pedaços errados são <b>parecidos</b> com " +
+            "os certos.", "p" + pi + "enun");
+  montaMarcar(d, pi);
+}
+
+/* ===== BLOCO C — A MÁQUINA TIRA (13 e 14) ===== */
+
+/* 13 e 14 — TIRE UMA LETRA (T02, VERBATIM: "Elimine uma letra na primeira
+   sílaba de cada palavra e escreva o nome dos desenhos")
+   ⭐⭐ É o verbo REMOVER, que o currículo nomeia por extenso e que nenhuma outra
+      folha da colheita pede. E o que sai é CCV → CV, que amarra no degrau de
+      trás: a sílaba perde a segunda consoante e vira simples. */
+function montaRemover(d, pi){
+  ST.folha["p" + pi].forEach(function(k, i){
+    var X = REM[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.innerHTML = figOu(X.f);
+    lin.appendChild(botaoSom("Ouvir as duas palavras", function(){ falar("rem_" + k); }));
+    box.appendChild(lin);
+    tiraLetra(box, id, pi, X, "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+    fechaItem(d, box, id);
+  });
+}
+function f13(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Tire <b>uma letra</b> do começo e aparece outra palavra. " +
+            "Toque na letra que sai.", "p" + pi + "enun");
+  montaRemover(d, pi);
+}
+function f14(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Tem sempre uma palavra escondida dentro da outra. Ache a " +
+            "letra que está sobrando.", "p" + pi + "enun");
+  montaRemover(d, pi);
+}
+
+/* ===== BLOCO D — A MÁQUINA TROCA (15 a 19) ===== */
+
+/* 15 e 16 — TROQUE A PRIMEIRA LETRA (T28, VERBATIM: "Troca LETRAS forma
+   PALAVRAS" — B/M/C + OLA → BOLA, MOLA, COLA)
+   ⭐⭐⭐ A terminação fica PARADA e a letra da frente muda. É o degrau mais
+      concreto do caderno: a criança vê a palavra nascer debaixo do dedo. */
+function montaTrocaLetra(d, pi){
+  ST.folha["p" + pi].forEach(function(k, i){
+    var T = TRO[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var alvos = [], n;
+    for(n = 0; n < T.ls.length; n++) alvos.push("t" + n);
+    registra(id, pi, alvos.join(" "));
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "palgrande", '<i class="lacuna peq"></i><span class="pd forte">' + T.fim + "</span>"));
+    box.appendChild(lin);
+    var cx = el("div", "juntas"), feitos = 0;
+    T.ls.forEach(function(L, n){
+      var linha = el("div", "juntalin");
+      var b = el("button", "sil" + (ST.resp[id] ? " usada" : ""), L + " + " + T.fim);
+      b.setAttribute("aria-label", "letra " + L + " mais " + T.fim);
+      b.setAttribute("data-qa", "op-" + id + "-t" + n);
+      var saida = el("span", "saida", ST.resp[id] ? T.r[n] : "");
+      b.onclick = function(){
+        if(ST.resp[id] || b.className.indexOf("usada") > -1) return;
+        sPasso(); b.className = "sil usada"; saida.innerHTML = T.r[n];
+        falar("pal_" + chaveQuadro(T.r[n]));
+        feitos++;
+        if(feitos === T.ls.length){ acertou(id, "certo" + pi + "_" + k); box.className = "item feito"; }
+      };
+      linha.appendChild(b);
+      linha.appendChild(el("span", "seta", "&rarr;"));
+      linha.appendChild(saida);
+      cx.appendChild(linha);
+    });
+    box.appendChild(cx);
+    fechaItem(d, box, id);
+  });
+}
+function f15(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "O fim da palavra fica <b>parado</b>. Troque só a letra da " +
+            "frente e veja quantas palavras saem.", "p" + pi + "enun");
+  montaTrocaLetra(d, pi);
+}
+function f16(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Outra terminação parada, e de novo três palavras dentro " +
+            "dela.", "p" + pi + "enun");
+  montaTrocaLetra(d, pi);
+}
+
+/* 17 — TROQUE A LETRA DE DENTRO (T16, VERBATIM: "FORMANDO NOVAS PALAVRAS —
+   TROQUE AS LETRAS INDICADAS E ESCREVA AS NOVAS PALAVRAS") */
+function f17(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Agora a letra que muda está <b>marcada</b>. Escolha a que " +
+            "entra no lugar dela.", "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var Q = DEN[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    var mostra = "";
+    Q.de.split("").forEach(function(L, n){
+      mostra += n === Q.pos ? '<span class="lt marcada">' + L + "</span>"
+                            : '<span class="lt">' + L + "</span>";
+    });
+    lin.appendChild(el("div", "palgrande", mostra));
+    lin.appendChild(botaoSom("Ouvir a palavra nova", function(){ falar("den_" + k); }));
+    box.appendChild(lin);
+    opcoes(box, pi, id, baralha(Q.ops.map(function(L){
+      return {v: L.toLowerCase(), rot: L, aria: "letra " + L, fala: "let_" + L.toLowerCase()};
+    })), Q.r.toLowerCase(), "pal", "certo" + pi + "_" + k, "dica" + pi + "_" + k,
+    function(){ box.appendChild(el("div", "palgrande nova", Q.p)); });
+    fechaItem(d, box, id);
+  });
+}
+
+/* 18 e 19 — A TIRA (T13, VERBATIM: "Troca-sílaba — Monte o troca-sílaba.
+   Depois, anote as palavras que você formou")
+   ⭐⭐ A terminação fica parada numa janela e a criança encaixa a sílaba da tira.
+      É a Roda das Sílabas do 1º ano um degrau acima: lá girava a VOGAL, aqui
+      encaixa a SÍLABA inteira. */
+function montaTira(d, pi){
+  ST.folha["p" + pi].forEach(function(k, i){
+    var X = TIRA[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    registra(id, pi, "s" + chaveQuadro(X.ini));
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "ajuda", "Ache <b>" + X.r + "</b>."));
+    lin.appendChild(botaoSom("Ouvir a palavra", function(){ falar("pal_" + chaveQuadro(X.r)); }));
+    box.appendChild(lin);
+    var janela = el("div", "janela");
+    var vaga = el("span", "sbjan", ST.resp[id] ? X.ini : "");
+    janela.appendChild(vaga);
+    janela.appendChild(el("span", "sbfixo", X.fim));
+    box.appendChild(janela);
+    var fita = el("div", "fita");
+    X.tira.forEach(function(sb){
+      var b = el("button", "sil", sb);
+      b.setAttribute("aria-label", sb);
+      b.setAttribute("data-qa", (sb === X.ini ? "op-" + id + "-s" + chaveQuadro(sb)
+                                              : "no-" + id + "-f" + chaveQuadro(sb)));
+      b.onclick = function(){
+        if(ST.resp[id]) return;
+        sPasso(); falaDaSilaba(sb)();
+        if(sb !== X.ini){
+          b.className = "sil nao";
+          setTimeout(function(){ b.className = "sil"; }, 420);
+          errou(id, "dica" + pi + "_" + k); return;
+        }
+        b.className = "sil usada";
+        vaga.innerHTML = sb; janela.className = "janela pisca";
+        falar("pal_" + chaveQuadro(X.r));
+        acertou(id, "certo" + pi + "_" + k); box.className = "item feito";
+      };
+      fita.appendChild(b);
+    });
+    box.appendChild(fita);
+    fechaItem(d, box, id);
+  });
+}
+function f18(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Na janela, o fim <b>LHA</b> está parado. Encaixe o pedaço " +
+            "da tira que forma a palavra pedida.", "p" + pi + "enun");
+  montaTira(d, pi);
+}
+function f19(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Agora o fim parado é <b>NHO</b>. A tira mudou; o jeito é o " +
+            "mesmo.", "p" + pi + "enun");
+  montaTira(d, pi);
+}
+
+/* ===== BLOCO E — A MÁQUINA INVERTE (20 a 22) ===== */
+
+/* 20, 21 e 22 — TROQUE OS PEDAÇOS DE LUGAR (T10, VERBATIM: "MUDA-SÍLABAS —
+   MUDE A SÍLABA DE LUGAR E UMA NOVA PALAVRA IRÁ FORMAR")
+   ⭐⭐⭐ É O CORAÇÃO DO DEGRAU e o que dá nome ao caderno. As MESMAS duas
+      sílabas, na ordem trocada, são outra palavra — e a descoberta não se
+      esquece. A 22 sobe: o segundo pedaço tem três ou quatro letras. */
+function montaInverter(d, pi){
+  ST.folha["p" + pi].forEach(function(k, i){
+    var X = INV[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "palpeq", X.de));
+    lin.appendChild(botaoSom("Ouvir as duas palavras", function(){ falar("inv_" + k); }));
+    box.appendChild(lin);
+    inverte(box, id, pi, X, "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+    fechaItem(d, box, id);
+  });
+}
+function f20(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Puxe o pedaço de trás para a <b>frente</b> — e olhe o que " +
+            "nasce.", "p" + pi + "enun");
+  montaInverter(d, pi);
+}
+function f21(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "De novo: os mesmos dois pedaços, na ordem trocada.",
+            "p" + pi + "enun");
+  montaInverter(d, pi);
+}
+function f22(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Estas são mais difíceis: o segundo pedaço é maior. Diga a " +
+            "palavra ao contrário antes de puxar.", "p" + pi + "enun");
+  montaInverter(d, pi);
+}
+
+/* ===== BLOCO F — A MÁQUINA ACRESCENTA (23 e 24) ===== */
+
+/* 23 e 24 — ACRESCENTE UM PEDAÇO (T09, VERBATIM: "ACRESCENTE A SÍLABA,
+   FORMANDO UMA NOVA PALAVRA E A ESCREVA NA LINHA ABAIXO")
+   ⭐⭐ O terceiro verbo do currículo. A 23 acrescenta no FIM e a 24 no COMEÇO —
+      e é assim que as três posições da habilidade ficam cobertas. */
+function montaAcrescentar(d, pi){
+  ST.folha["p" + pi].forEach(function(k, i){
+    var A = ACR[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.innerHTML = figOu(A.f);
+    lin.appendChild(el("div", "palgrande", A.onde === "fim"
+      ? '<span class="pd">' + A.base + '</span><i class="lacuna"></i>'
+      : '<i class="lacuna"></i><span class="pd">' + A.base + "</span>"));
+    lin.appendChild(botaoSom("Ouvir a palavra nova", function(){ falar("acr_" + k); }));
+    box.appendChild(lin);
+    opcoes(box, pi, id, baralha(A.ops.map(function(sb){
+      return {v: sb.toLowerCase(), rot: sb, aria: sb, fala: falaDaSilaba(sb)};
+    })), A.r.toLowerCase(), "pal", "certo" + pi + "_" + k, "dica" + pi + "_" + k,
+    function(){ box.appendChild(el("div", "palgrande nova", A.p)); });
+    fechaItem(d, box, id);
+  });
+}
+function f23(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Ponha um pedaço <b>no fim</b> e a palavra vira outra. " +
+            "Ouça qual é.", "p" + pi + "enun");
+  montaAcrescentar(d, pi);
+}
+function f24(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Agora o pedaço entra <b>no começo</b>. Ouça a palavra " +
+            "inteira antes de escolher.", "p" + pi + "enun");
+  montaAcrescentar(d, pi);
+}
+
+/* ===== BLOCO G — A MÁQUINA RECORTA (25 e 26) ===== */
+
+/* 25 e 26 — O FIM DE DUAS, UMA NOVA (T30, VERBATIM: "CIRCULE A SÍLABA FINAL DE
+   CADA PALAVRA PARA FORMAR NOVAS PALAVRAS E ESCREVA")
+   ⭐⭐⭐ A MELHOR DAS 40 FOLHAS. Duas figuras conhecidas geram uma terceira, e
+      para isso a criança tem de OUVIR o fim de cada uma. É o gesto mais alto do
+      degrau — e as dezoito figuras vêm todas desta mesma folha de papel. */
+function montaFimDeDuas(d, pi){
+  ST.folha["p" + pi].forEach(function(k, i){
+    var X = FIM[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(botaoSom("Ouvir as três palavras", function(){ falar("fim_" + k); }));
+    box.appendChild(lin);
+    fimDeDuas(box, id, pi, X, "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+    fechaItem(d, box, id);
+  });
+}
+function f25(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Pegue o <b>último</b> pedaço de cada palavra. Os dois juntos " +
+            "formam uma palavra nova.", "p" + pi + "enun");
+  montaFimDeDuas(d, pi);
+}
+function f26(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Mais três. Diga cada palavra devagar e pare no fim dela.",
+            "p" + pi + "enun");
+  montaFimDeDuas(d, pi);
+}
+
+/* ===== BLOCO H — O CÓDIGO (27 a 30) ===== */
+
+/* 27 a 30 — O CÓDIGO DAS SÍLABAS (T19, VERBATIM: "DE ACORDO COM OS NÚMEROS
+   ACIMA, FORME AS PALAVRAS" · T25 · T26 · T22)
+   ⭐⭐ A sílaba vira NÚMERO e a criança decifra. Os quatro sobem juntos: duas
+      sílabas, três, quatro e, no fim, o quadro dos encontros consonantais, onde
+      BRAVO e CRAVO diferem por UMA letra. */
+function montaCodigo(d, pi, qk){
+  var Q = COD[qk];
+  quadroCodigo(d, Q);
+  ST.folha["p" + pi].forEach(function(k, i){
+    var P = Q.pal[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    decodifica(box, id, pi, Q, P, "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+    fechaItem(d, box, id);
+  });
+}
+function f27(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Cada pedaço ganhou um <b>número</b>. Siga os números e a " +
+            "palavra aparece.", "p" + pi + "enun");
+  montaCodigo(d, pi, "q27");
+}
+function f28(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Outro quadro, e agora há palavras de <b>três</b> pedaços.",
+            "p" + pi + "enun");
+  montaCodigo(d, pi, "q28");
+}
+function f29(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Agora as palavras são compridas: <b>quatro</b> números cada " +
+            "uma.", "p" + pi + "enun");
+  montaCodigo(d, pi, "q29");
+}
+function f30(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Neste quadro os pedaços têm <b>duas consoantes juntas</b>. " +
+            "Olhe bem: BRA e CRA mudam por uma letra só.", "p" + pi + "enun");
+  montaCodigo(d, pi, "q30");
+}
+
+/* ===== BLOCO I — A PALAVRA NO MUNDO (31 a 35) ===== */
+
+/* 31 — FALTAM AS DUAS PONTAS (T23, VERBATIM: "QUAL É A SÍLABA? — ESCREVA AS
+   SÍLABAS, INICIAL E FINAL, DO NOME DE CADA DESENHO")
+   ⭐⭐ É o INVERSO da folha da sílaba que falta do caderno anterior: lá faltava
+      a do meio, aqui faltam as duas pontas e só a do meio é dada. */
+function f31(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Só o pedaço do <b>meio</b> ficou. Ponha o do começo e o do " +
+            "fim, nessa ordem.", "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var P = PON[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    registra(id, pi, "z0 z1");
+    var lin = el("div", "enunlin");
+    lin.innerHTML = figOu(P.f);
+    lin.appendChild(botaoSom("Ouvir a palavra", function(){ falar("pon_" + k); }));
+    box.appendChild(lin);
+    var vaga = el("div", "vagas");
+    var c0 = el("span", "cxs2" + (ST.resp[id] ? " cheia" : ""), ST.resp[id] ? P.ini : "");
+    var cm = el("span", "cxs2 cheia dada", P.meio);
+    var c1 = el("span", "cxs2" + (ST.resp[id] ? " cheia" : ""), ST.resp[id] ? P.fim : "");
+    vaga.appendChild(c0); vaga.appendChild(cm); vaga.appendChild(c1);
+    box.appendChild(vaga);
+    var feitas = 0, alvo = [P.ini, P.fim], cxs = [c0, c1];
+    var cx = el("div", "sils");
+    baralha(P.ops.slice(0)).forEach(function(sb){
+      var qual = alvo.indexOf(sb);
+      var b = el("button", "sil", sb);
+      b.setAttribute("aria-label", sb);
+      b.setAttribute("data-qa", (qual >= 0 ? "op-" + id + "-z" + qual
+                                           : "no-" + id + "-p" + chaveQuadro(sb)));
+      b.onclick = function(){
+        if(ST.resp[id]) return;
+        sPasso(); falaDaSilaba(sb)();
+        if(qual !== feitas){
+          b.className = "sil nao";
+          setTimeout(function(){ b.className = "sil"; }, 420);
+          errou(id, "dica" + pi + "_" + k); return;
+        }
+        b.className = "sil usada";
+        cxs[feitas].innerHTML = sb; cxs[feitas].className = "cxs2 cheia";
+        feitas++;
+        if(feitas === 2){ acertou(id, "certo" + pi + "_" + k); box.className = "item feito"; }
+      };
+      cx.appendChild(b);
+    });
+    box.appendChild(cx);
+    fechaItem(d, box, id);
+  });
+}
+
+/* 32 — COMEÇO, MEIO E FIM (T37, VERBATIM: "Escreva o nome das figuras,
+   separando as sílabas e identifique a sílaba inicial, medial e final")
+   ⭐⭐ É a única folha da colheita que dá NOME às três posições — e são as
+      palavras que o currículo usa: *"iniciais, mediais ou finais"*. */
+function f32(d, pi){
+  gavetas(d, pi, "gA", "Em que lugar da palavra mora cada pedaço? Leve cada um " +
+          "para a gaveta dele.");
+}
+
+/* 33 — A PALAVRA ENTRA NA FRASE (T39, VERBATIM: "COMPLETE AS FRASES COM AS
+   PALAVRAS DA ATIVIDADE ACIMA")
+   ⭐ É o degrau que faltava em tudo o que veio antes: a palavra montada sai da
+      lista e vai para DENTRO de uma frase, onde ela significa alguma coisa.
+   ⚠️ AS LETRAS VÊM EMBARALHADAS, na horizontal (ideia do Marcos) — e o teclado
+      de verdade continua valendo, pela regra das duas portas. */
+function f33(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Qual palavra falta na frase? Monte a palavra tocando nas " +
+            "letras — ou digite no seu teclado.", "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var F = FRAS[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    /* ⚠️ A RESPOSTA DECLARADA É A PALAVRA, não um rótulo: é por ela que o
+       jogador da banca digita, e é ela que o relatório mede. Escrever "esc"
+       aqui fez a folha inteira não fechar na primeira medição. */
+    registra(id, pi, F.w);
+    var lin = el("div", "enunlin");
+    lin.innerHTML = figOu(F.f);
+    lin.appendChild(el("div", "frase", F.a + ' <i class="lacuna"></i> ' + F.z));
+    lin.appendChild(botaoSom("Ouvir a frase", function(){ falar("fra_" + k); }));
+    box.appendChild(lin);
+    var grade = el("div", "cruz uma"), cels = [], t;
+    grade.setAttribute("data-qa", "esc-" + id);
+    for(t = 0; t < F.w.length; t++){
+      var c = el("button", "ccel viva" + (ST.resp[id] ? " ok" : ""),
+                 ST.resp[id] ? F.w.charAt(t) : "");
+      c.setAttribute("aria-label", "Casa da palavra");
+      cels.push(c); grade.appendChild(c);
+    }
+    box.appendChild(grade);
+    var teclar = fileiraLetras(box, id, pi, F.w, cels,
+                               "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+    /* a outra porta: tocar na grade marca este item como o ativo, e o teclado
+       de verdade passa a escrever nele */
+    grade.onclick = function(){ if(!ST.resp[id]) ATIVO_LETRAS = teclar; };
+    fechaItem(d, box, id);
+  });
+}
+
+/* 34 — O DITADO DOS TRÊS LUGARES (T35, VERBATIM: "O JOGO DAS 3 PALAVRAS —
+   PREENCHA ESTE PRIMEIRO QUADRO COM AS SÍLABAS QUE FOREM DITADAS E ENCONTRE 3
+   PALAVRAS, NA CARTELA, QUE PODEM SER COMPLETADAS COM CADA SÍLABA, TANTO NO
+   INÍCIO, NO MEIO E NO FIM DAS PALAVRAS")
+   ⭐⭐⭐ É O FECHO DO CADERNO. Uma sílaba só serve em TRÊS lugares diferentes —
+      a ideia grande do degrau inteiro numa folha — e ainda chega por VOZ. */
+function f34(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Ouça o pedaço ditado. Ele cabe em <b>três</b> palavras da " +
+            "cartela: no começo, no meio e no fim. Marque as três.",
+            "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var D = DIT[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "palgrande", '<span class="pd forte">' + D.sb + "</span>"));
+    lin.appendChild(botaoSom("Ouvir o pedaço ditado", falaDaSilaba(D.sb)));
+    box.appendChild(lin);
+    var pecas = [];
+    D.ok.forEach(function(o, n){ pecas.push({k: "c" + n, t: o.l, ok: 1}); });
+    D.no.forEach(function(l, n){ pecas.push({k: "e" + n, t: l, ok: 0}); });
+    marqueConfira(box, id, pi, baralha(pecas),
+                  "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* 35 — O CARTAZ QUE VOCÊ LEVA (T34, VERBATIM: "ESCREVA DUAS PALAVRAS INICIANDO
+   COM CADA SÍLABA EM DESTAQUE")
+   ⭐⭐ O CONCEITO VEM POR ÚLTIMO, e isso é a LEI da casa (`EDUVERSE-FILOSOFIA.md`,
+      Portão 0): a criança passou trinta e quatro folhas tirando, trocando,
+      invertendo e acrescentando — só agora ela recebe as quatro palavras que
+      dão nome ao que já sabe fazer. Se este cartaz viesse na folha 1, seria
+      aula de decorar nome difícil.
+   ⭐ E o cartaz não chega pronto: ela o monta. O cartaz que ela leva para o
+      caderno é o que ela construiu. */
+function f35(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Você já sabe fazer tudo isto. Agora as palavras que dão " +
+            "nome: leve cada exemplo para a linha dele.", "p" + pi + "enun");
+  var cart = el("div", "cartaz"), linhas = {}, listaC = [];
+  CART.linhas.forEach(function(L){
+    var l = el("div", "cartlin");
+    var t = el("div", "cartit");
+    t.innerHTML = "<b>" + L.t + "</b><span>" + L.d + "</span>";
+    t.appendChild(botaoSom("Ouvir", function(){ falar("cart_" + L.k); }));
+    l.appendChild(t);
+    var alvo = el("div", "cartalvo");
+    alvo.setAttribute("data-alvo", "1");
+    alvo.setAttribute("data-qa", "alvo-cart" + pi + "_" + L.k);
+    alvo.appendChild(el("span", "cartex", L.e));
+    l.appendChild(alvo);
+    l._v = L.k; l._dentro = alvo;
+    linhas[L.k] = l; listaC.push(l);
+    cart.appendChild(l);
+  });
+  d.appendChild(cart);
+  var banco = el("div", "figbanco"), marcada = null;
+  ST.folha["p" + pi].forEach(function(k, i){
+    var X = CART.exem[k], id = "n" + pi + "_" + i;
+    registra(id, pi, ">cart" + pi + "_" + X.c);
+    var b = el("button", "op pal" + (ST.resp[id] ? " usada" : ""), X.p);
+    b.setAttribute("aria-label", X.p);
+    b.setAttribute("data-qa", "item-" + id);
+    b.setAttribute("data-alvo", "1");
+    if(ST.resp[id]) linhas[X.c]._dentro.appendChild(el("span", "fdentro", X.p));
+    function larga(l){
+      if(ST.resp[id]) return;
+      if(l._v === X.c){
+        b.className = "op pal usada";
+        l._dentro.appendChild(el("span", "fdentro", X.p));
+        if(marcada === b) marcada = null;
+        acertou(id, "certo" + pi + "_" + k);
+      } else {
+        l.className = "cartlin erro";
+        setTimeout(function(){ l.className = "cartlin"; }, 500);
+        errou(id, "dica" + pi + "_" + k);
+      }
+    }
+    b._larga = larga;
+    b.onclick = function(){
+      if(b._arrastou){ b._arrastou = false; return; }
+      if(ST.resp[id]) return;
+      sPasso(); falar("exe_" + k);
+      if(marcada === b){ b.className = "op pal"; marcada = null; return; }
+      if(marcada) marcada.className = "op pal";
+      b.className = "op pal marcada"; marcada = b;
+    };
+    puxavel(b, listaC, function(l){ larga(l); });
+    banco.appendChild(b);
+  });
+  listaC.forEach(function(l){
+    l.onclick = function(){ if(marcada && marcada._larga) marcada._larga(l); };
+  });
+  d.appendChild(banco);
+}
