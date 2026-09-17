@@ -13,19 +13,14 @@
    "pedacos": 3
   },
   {
-   "palavra": "aranha",
-   "caminho": "corrida",
-   "pedacos": 3
-  },
-  {
    "palavra": "banana",
    "caminho": "corrida",
    "pedacos": 3
   },
   {
-   "palavra": "banho",
+   "palavra": "aranha",
    "caminho": "corrida",
-   "pedacos": 2
+   "pedacos": 3
   },
   {
    "palavra": "bebida",
@@ -38,17 +33,27 @@
    "pedacos": 2
   },
   {
-   "palavra": "bico",
-   "caminho": "corrida",
-   "pedacos": 2
-  },
-  {
    "palavra": "bicicleta",
    "caminho": "corrida",
    "pedacos": 4
   },
   {
+   "palavra": "banho",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
    "palavra": "bola",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
+   "palavra": "boca",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
+   "palavra": "bico",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -58,7 +63,12 @@
    "pedacos": 2
   },
   {
-   "palavra": "boca",
+   "palavra": "bolha",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
+   "palavra": "bolsa",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -68,27 +78,27 @@
    "pedacos": 2
   },
   {
-   "palavra": "borboleta",
-   "caminho": "corrida",
-   "pedacos": 4
-  },
-  {
-   "palavra": "bolsa",
-   "caminho": "corrida",
-   "pedacos": 2
-  },
-  {
-   "palavra": "bolha",
-   "caminho": "corrida",
-   "pedacos": 2
-  },
-  {
    "palavra": "bolo",
    "caminho": "corrida",
    "pedacos": 2
   },
   {
+   "palavra": "borboleta",
+   "caminho": "corrida",
+   "pedacos": 4
+  },
+  {
    "palavra": "bravo",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
+   "palavra": "briga",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
+   "palavra": "brinco",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -98,28 +108,18 @@
    "pedacos": 2
   },
   {
-   "palavra": "cadeira",
+   "palavra": "cachorro",
    "caminho": "corrida",
    "pedacos": 3
   },
   {
-   "palavra": "brinco",
-   "caminho": "pausa",
-   "pedacos": 2
-  },
-  {
-   "palavra": "cachorro",
+   "palavra": "cadeira",
    "caminho": "corrida",
    "pedacos": 3
   },
   {
    "palavra": "caderno",
    "caminho": "corrida (pedaco)",
-   "pedacos": 2
-  },
-  {
-   "palavra": "cama",
-   "caminho": "corrida",
    "pedacos": 2
   },
   {
@@ -133,12 +133,12 @@
    "pedacos": 2
   },
   {
-   "palavra": "caneca",
+   "palavra": "cama",
    "caminho": "corrida",
-   "pedacos": 3
+   "pedacos": 2
   },
   {
-   "palavra": "canela",
+   "palavra": "caneca",
    "caminho": "corrida",
    "pedacos": 3
   },
@@ -153,9 +153,9 @@
    "pedacos": 2
   },
   {
-   "palavra": "casa",
+   "palavra": "canela",
    "caminho": "corrida",
-   "pedacos": 2
+   "pedacos": 3
   },
   {
    "palavra": "carroça",
@@ -163,8 +163,33 @@
    "pedacos": 2
   },
   {
+   "palavra": "casa",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
+   "palavra": "cedo",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
+   "palavra": "cavalo",
+   "caminho": "corrida",
+   "pedacos": 3
+  },
+  {
    "palavra": "casaco",
    "caminho": "corrida (pedaco)",
+   "pedacos": 2
+  },
+  {
+   "palavra": "coco",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
+   "palavra": "chorao",
+   "caminho": "corrida",
    "pedacos": 2
   },
   {
@@ -178,22 +203,7 @@
    "pedacos": 4
   },
   {
-   "palavra": "cavalo",
-   "caminho": "corrida",
-   "pedacos": 3
-  },
-  {
-   "palavra": "cedo",
-   "caminho": "corrida",
-   "pedacos": 2
-  },
-  {
-   "palavra": "chorao",
-   "caminho": "corrida",
-   "pedacos": 2
-  },
-  {
-   "palavra": "copo",
+   "palavra": "cubo",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -203,12 +213,7 @@
    "pedacos": 2
   },
   {
-   "palavra": "coco",
-   "caminho": "corrida",
-   "pedacos": 2
-  },
-  {
-   "palavra": "dedo",
+   "palavra": "copo",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -218,7 +223,12 @@
    "pedacos": 2
   },
   {
-   "palavra": "cubo",
+   "palavra": "dedo",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
+   "palavra": "doce",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -233,16 +243,6 @@
    "pedacos": 2
   },
   {
-   "palavra": "doce",
-   "caminho": "corrida",
-   "pedacos": 2
-  },
-  {
-   "palavra": "dragao",
-   "caminho": "corrida",
-   "pedacos": 2
-  },
-  {
    "palavra": "dominó",
    "caminho": "corrida (pedaco)",
    "pedacos": 2
@@ -253,7 +253,12 @@
    "pedacos": 2
   },
   {
-   "palavra": "fevereiro",
+   "palavra": "dragao",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
+   "palavra": "elefante",
    "caminho": "corrida",
    "pedacos": 4
   },
@@ -263,22 +268,12 @@
    "pedacos": 2
   },
   {
-   "palavra": "elefante",
+   "palavra": "fevereiro",
    "caminho": "corrida",
    "pedacos": 4
   },
   {
-   "palavra": "folha",
-   "caminho": "corrida",
-   "pedacos": 2
-  },
-  {
    "palavra": "fogo",
-   "caminho": "corrida",
-   "pedacos": 2
-  },
-  {
-   "palavra": "ganho",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -288,22 +283,22 @@
    "pedacos": 2
   },
   {
+   "palavra": "gato",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
+   "palavra": "folha",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
    "palavra": "gatinho",
    "caminho": "corrida",
    "pedacos": 3
   },
   {
-   "palavra": "grama",
-   "caminho": "corrida",
-   "pedacos": 2
-  },
-  {
-   "palavra": "gota",
-   "caminho": "corrida",
-   "pedacos": 2
-  },
-  {
-   "palavra": "gato",
+   "palavra": "ganho",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -318,12 +313,12 @@
    "pedacos": 2
   },
   {
-   "palavra": "laço",
+   "palavra": "gota",
    "caminho": "corrida",
    "pedacos": 2
   },
   {
-   "palavra": "lata",
+   "palavra": "grama",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -338,7 +333,12 @@
    "pedacos": 2
   },
   {
-   "palavra": "lupa",
+   "palavra": "lata",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
+   "palavra": "laço",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -353,7 +353,12 @@
    "pedacos": 2
   },
   {
-   "palavra": "mala",
+   "palavra": "lua",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
+   "palavra": "lupa",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -363,12 +368,7 @@
    "pedacos": 3
   },
   {
-   "palavra": "madeira",
-   "caminho": "corrida (pedaco)",
-   "pedacos": 2
-  },
-  {
-   "palavra": "meia",
+   "palavra": "mala",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -378,7 +378,12 @@
    "pedacos": 2
   },
   {
-   "palavra": "mesa",
+   "palavra": "madeira",
+   "caminho": "corrida (pedaco)",
+   "pedacos": 2
+  },
+  {
+   "palavra": "meia",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -398,14 +403,19 @@
    "pedacos": 2
   },
   {
-   "palavra": "muda",
+   "palavra": "mesa",
    "caminho": "corrida",
    "pedacos": 2
   },
   {
-   "palavra": "navio",
+   "palavra": "nada",
    "caminho": "corrida",
-   "pedacos": 3
+   "pedacos": 2
+  },
+  {
+   "palavra": "muda",
+   "caminho": "corrida",
+   "pedacos": 2
   },
   {
    "palavra": "nadadora",
@@ -413,7 +423,12 @@
    "pedacos": 4
   },
   {
-   "palavra": "nada",
+   "palavra": "navio",
+   "caminho": "corrida",
+   "pedacos": 3
+  },
+  {
+   "palavra": "ninho",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -423,7 +438,12 @@
    "pedacos": 2
   },
   {
-   "palavra": "ninho",
+   "palavra": "noite",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
+   "palavra": "parte",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -433,32 +453,12 @@
    "pedacos": 2
   },
   {
-   "palavra": "noite",
-   "caminho": "corrida",
-   "pedacos": 2
-  },
-  {
-   "palavra": "palha",
-   "caminho": "corrida",
-   "pedacos": 2
-  },
-  {
-   "palavra": "passarinho",
-   "caminho": "corrida",
-   "pedacos": 4
-  },
-  {
    "palavra": "panela",
    "caminho": "corrida",
    "pedacos": 3
   },
   {
-   "palavra": "parte",
-   "caminho": "corrida",
-   "pedacos": 2
-  },
-  {
-   "palavra": "pata",
+   "palavra": "palha",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -468,12 +468,7 @@
    "pedacos": 2
   },
   {
-   "palavra": "pesca",
-   "caminho": "corrida",
-   "pedacos": 2
-  },
-  {
-   "palavra": "pena",
+   "palavra": "pata",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -483,9 +478,29 @@
    "pedacos": 2
   },
   {
+   "palavra": "passarinho",
+   "caminho": "corrida",
+   "pedacos": 4
+  },
+  {
+   "palavra": "pena",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
+   "palavra": "pinho",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
    "palavra": "peteca",
    "caminho": "corrida",
    "pedacos": 3
+  },
+  {
+   "palavra": "pesca",
+   "caminho": "corrida",
+   "pedacos": 2
   },
   {
    "palavra": "pipoca",
@@ -493,9 +508,9 @@
    "pedacos": 3
   },
   {
-   "palavra": "pinho",
+   "palavra": "porteira",
    "caminho": "corrida",
-   "pedacos": 2
+   "pedacos": 3
   },
   {
    "palavra": "placa",
@@ -508,14 +523,9 @@
    "pedacos": 2
   },
   {
-   "palavra": "porteira",
+   "palavra": "presente",
    "caminho": "corrida",
    "pedacos": 3
-  },
-  {
-   "palavra": "prata",
-   "caminho": "corrida",
-   "pedacos": 2
   },
   {
    "palavra": "poço",
@@ -523,12 +533,7 @@
    "pedacos": 2
   },
   {
-   "palavra": "presente",
-   "caminho": "corrida",
-   "pedacos": 3
-  },
-  {
-   "palavra": "rua",
+   "palavra": "prata",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -548,14 +553,19 @@
    "pedacos": 2
   },
   {
-   "palavra": "sacola",
+   "palavra": "rua",
    "caminho": "corrida",
-   "pedacos": 3
+   "pedacos": 2
   },
   {
-   "palavra": "sapato",
+   "palavra": "saca",
    "caminho": "corrida",
-   "pedacos": 3
+   "pedacos": 2
+  },
+  {
+   "palavra": "sapo",
+   "caminho": "corrida",
+   "pedacos": 2
   },
   {
    "palavra": "salada",
@@ -563,9 +573,14 @@
    "pedacos": 2
   },
   {
-   "palavra": "saca",
+   "palavra": "sapato",
    "caminho": "corrida",
-   "pedacos": 2
+   "pedacos": 3
+  },
+  {
+   "palavra": "sacola",
+   "caminho": "corrida",
+   "pedacos": 3
   },
   {
    "palavra": "sino",
@@ -578,7 +593,7 @@
    "pedacos": 2
   },
   {
-   "palavra": "sapo",
+   "palavra": "sopa",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -588,12 +603,17 @@
    "pedacos": 2
   },
   {
-   "palavra": "tapa",
+   "palavra": "sorte",
    "caminho": "corrida",
    "pedacos": 2
   },
   {
-   "palavra": "sorte",
+   "palavra": "teia",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
+   "palavra": "tapa",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -601,16 +621,6 @@
    "palavra": "sorvete",
    "caminho": "corrida",
    "pedacos": 3
-  },
-  {
-   "palavra": "sopa",
-   "caminho": "corrida",
-   "pedacos": 2
-  },
-  {
-   "palavra": "telha",
-   "caminho": "corrida",
-   "pedacos": 2
   },
   {
    "palavra": "tijolo",
@@ -623,7 +633,12 @@
    "pedacos": 3
   },
   {
-   "palavra": "teia",
+   "palavra": "tocha",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
+   "palavra": "telha",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -633,22 +648,22 @@
    "pedacos": 3
   },
   {
-   "palavra": "toma",
-   "caminho": "corrida",
-   "pedacos": 2
-  },
-  {
-   "palavra": "tocha",
-   "caminho": "corrida",
-   "pedacos": 2
-  },
-  {
    "palavra": "torta",
    "caminho": "corrida",
    "pedacos": 2
   },
   {
+   "palavra": "toma",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
    "palavra": "trata",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
+   "palavra": "tubo",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -668,7 +683,12 @@
    "pedacos": 2
   },
   {
-   "palavra": "tubo",
+   "palavra": "vinho",
+   "caminho": "corrida",
+   "pedacos": 2
+  },
+  {
+   "palavra": "vidro",
    "caminho": "corrida",
    "pedacos": 2
   },
@@ -681,26 +701,7 @@
    "palavra": "urso",
    "caminho": "corrida",
    "pedacos": 2
-  },
-  {
-   "palavra": "vinho",
-   "caminho": "corrida",
-   "pedacos": 2
-  },
-  {
-   "palavra": "vidro",
-   "caminho": "corrida",
-   "pedacos": 2
   }
  ],
- "nao_conferidas": [
-  {
-   "palavra": "briga",
-   "motivo": "`espaco` saiu 56% mais comprido que a palavra inteira — sinal de soletracao"
-  },
-  {
-   "palavra": "lua",
-   "motivo": "`espaco` saiu 35% mais comprido que a palavra inteira — sinal de soletracao"
-  }
- ]
+ "nao_conferidas": []
 }
